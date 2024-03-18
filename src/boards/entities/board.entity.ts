@@ -3,6 +3,7 @@ import { BaseModel } from "src/common/entities/basemodel.entitiy";
 import { Color } from "src/common/types/color.type";
 import { Column, Entity, OneToMany } from "typeorm";
 import { BoardMember } from "./boardmember.entity";
+import { Columns } from "src/columns/entities/column.entity";
 
 @Entity({
   name: "boards",
@@ -27,4 +28,7 @@ export class Board extends BaseModel {
   
   @OneToMany(() => BoardMember, (boardmember) => boardmember.board)
   boardmember: BoardMember[];
+
+  @OneToMany(() => Columns, (column) => column.board)
+  column: Columns[];
 }

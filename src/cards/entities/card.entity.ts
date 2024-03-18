@@ -1,9 +1,10 @@
 
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Color } from "src/common/types/color.type";
 import { CardWorker } from "./cardworker.entity";
 import { Comments } from "../comments/entities/comment.entity";
 import { BaseModel } from "src/common/entities/basemodel.entitiy";
+import { Columns } from "src/columns/entities/column.entity";
 
 
 @Entity({
@@ -41,6 +42,13 @@ import { BaseModel } from "src/common/entities/basemodel.entitiy";
       eager: true,
     })
     cardworker: CardWorker[];
+
+    @ManyToOne(() => Columns, (column) => column.cards, {
+      nullable: false,
+      onDelete: 'CASCADE',
+    })
+    @JoinColumn({ name: 'columnId', referencedColumnName: 'id'})
+    column: Columns
   }
 
 
