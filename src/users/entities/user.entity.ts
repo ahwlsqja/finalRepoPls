@@ -1,3 +1,4 @@
+import { BoardMember } from "src/boards/entities/boardmember.entity";
 import { Comments } from "src/cards/comments/entities/comment.entity";
 import { BaseModel } from "src/common/entities/base.entity";
 import { Column, Entity, OneToMany } from "typeorm";
@@ -29,4 +30,9 @@ export class Users extends BaseModel {
     eager: true,
   })
   comments: Comments[];
+
+  @OneToMany(() => BoardMember, (boardmember) => boardmember.user, {
+    onDelete: "CASCADE",
+  })
+  boardmember: BoardMember[];
 }

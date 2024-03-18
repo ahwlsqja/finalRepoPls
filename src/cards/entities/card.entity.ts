@@ -1,14 +1,14 @@
 import { BaseModel } from "src/common/entities/base.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Color } from "src/common/types/color.type";
+import { CardWorker } from "./cardworker.entity";
 import { Comments } from "../comments/entities/comment.entity";
+
 
 @Entity({
     name: 'cards',
   })
   export class Cards extends BaseModel{
-    // @PrimaryGeneratedColumn()
-    // id: number;
   
     @Column({ type: 'number', unique: true, nullable: false })
     columnId: number;
@@ -21,12 +21,6 @@ import { Comments } from "../comments/entities/comment.entity";
 
     @Column({ type: 'varchar', nullable: false })
     content: string;
-
-    // @Column({ type: 'date', nullable: false })
-    // createdAt: Date;
-
-    // @Column({ type: 'date', nullable: false })
-    // updatedAt: Date;
 
     @Column({ type: 'number', nullable: false })
     orderByCards: number;
@@ -47,21 +41,23 @@ import { Comments } from "../comments/entities/comment.entity";
   @Entity({
     name: 'check_lists',
   })
+
+  comments: Comments[];
+
+  @OneToMany(() => CardWorker, (cardworker) => cardworker.cards, {
+    eager: true,
+  })
+  cardworker: CardWorker[];
+}
+
   export class Check_lists extends BaseModel{
-    // @PrimaryGeneratedColumn()
-    // id: number;
+
   
     @Column({ type: 'number', unique: true, nullable: false })
     cardId: number;
   
     @Column({ type: 'varchar', nullable: false })
     title: string;
-
-    // @Column({ type: 'date', nullable: false })
-    // createdAt: Date;
-
-    // @Column({ type: 'date', nullable: false })
-    // updatedAt: Date;
 
     @Column({ type: 'number', nullable: false })
     orderByCheck: number;
@@ -71,8 +67,6 @@ import { Comments } from "../comments/entities/comment.entity";
     name: 'check_current',
   })
   export class Check_current extends BaseModel{
-    // @PrimaryGeneratedColumn()
-    // id: number;
   
     @Column({ type: 'number', unique: true, nullable: false })
     checkId: number;
@@ -83,3 +77,4 @@ import { Comments } from "../comments/entities/comment.entity";
     @Column({ type: 'boolean', nullable: false })
     isDone: boolean;
   }
+

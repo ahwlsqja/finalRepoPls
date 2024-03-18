@@ -8,6 +8,7 @@ import {
 import { Board } from "./board.entity";
 import { Users } from "src/users/entities/user.entity";
 
+
 @Entity({
   name: "boardmember",
 })
@@ -18,19 +19,13 @@ export class BoardMember {
   @PrimaryGeneratedColumn()
   id: number;
 
-//   @ManyToOne(() => Users, (user) => user.boardmember, {
-//     onDelete: "CASCADE",
-//   })
-//   @JoinColumn({ name: "userId", referencedColumnName: "id" })
-//   user: Users;
 
-//   @ManyToOne(() => Board, (board) => board.boardmember, {
-//     onDelete: "CASCADE",
-//   })
-//   @JoinColumn({ name: "boardId", referencedColumnName: "id" })
-//   board: Board;
+  @ManyToOne(() => Users, (user) => user.boardmember, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "userId", referencedColumnName: "id" })
+  user: Users;
 
-//   @OneToMany(() => Cardworker, (cardworker) => cardworker.boardmember)
-//   cardworker: Cardworker[];
-// 
+  @OneToMany(() => CardWorker, (cardworker) => cardworker.boardmember)
+  cardworker: CardWorker[];
 }
