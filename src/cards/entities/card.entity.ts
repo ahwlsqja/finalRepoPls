@@ -1,6 +1,7 @@
 import { BaseModel } from "src/common/entities/base.entity";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Color } from "src/common/types/color.type";
+import { Comments } from "../comments/entities/comment.entity";
 
 @Entity({
     name: 'cards',
@@ -35,6 +36,12 @@ import { Color } from "src/common/types/color.type";
 
     @Column({ type: 'date', nullable: false })
     endDate: Date;
+
+    @OneToMany(() => Comments, (comment) => comment.user, {
+        eager: true,
+      })
+      comments: Comments[];
+
   }
 
   @Entity({
