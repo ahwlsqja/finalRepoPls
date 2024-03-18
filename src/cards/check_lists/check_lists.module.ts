@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module } from "@nestjs/common"
 import { CheckListsService } from "./check_lists.service";
 import { CheckListsController } from "./check_lists.controller";
 

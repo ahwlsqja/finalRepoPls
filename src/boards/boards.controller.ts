@@ -6,7 +6,7 @@ import {
   Patch,
   Param,
   Delete,
-} from "@nestjs/common";
+} from "@nestjs/common"
 import { BoardsService } from "./boards.service";
 import { CreateBoardDto } from "./dto/create-board.dto";
 import { UpdateBoardDto } from "./dto/update-board.dto";

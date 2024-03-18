@@ -6,7 +6,7 @@ import {
   Patch,
   Param,
   Delete,
-} from "@nestjs/common";
+} from "@nestjs/common"
 import { CheckListsService } from "./check_lists.service";
 import { CreateCheckListDto } from "./dto/create-check_list.dto";
 import { UpdateCheckListDto } from "./dto/update-check_list.dto";
