@@ -1,4 +1,3 @@
-
 import { BaseModel } from "src/common/entities/base.entity";
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
