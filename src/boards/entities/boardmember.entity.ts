@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { Board } from "./board.entity";
 import { Users } from "src/users/entities/user.entity";
-import { CardWorker } from "src/cards/entities/cardworker.entity";
+
 
 @Entity({
   name: "boardmember",
@@ -19,17 +19,12 @@ export class BoardMember {
   @PrimaryGeneratedColumn()
   id: number;
 
+
   @ManyToOne(() => Users, (user) => user.boardmember, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "userId", referencedColumnName: "id" })
   user: Users;
-
-  @ManyToOne(() => Board, (board) => board.boardmember, {
-    onDelete: "CASCADE",
-  })
-  @JoinColumn({ name: "boardId", referencedColumnName: "id" })
-  board: Board;
 
   @OneToMany(() => CardWorker, (cardworker) => cardworker.boardmember)
   cardworker: CardWorker[];

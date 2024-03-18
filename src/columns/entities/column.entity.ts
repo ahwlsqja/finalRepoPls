@@ -1,1 +1,1 @@
-export class Column {}
+export class Column { }

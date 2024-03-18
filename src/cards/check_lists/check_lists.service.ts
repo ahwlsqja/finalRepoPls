@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common"
 import { CreateCheckListDto } from "./dto/create-check_list.dto";
 import { UpdateCheckListDto } from "./dto/update-check_list.dto";
 
