@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { Board } from "./board.entity";
 import { Users } from "src/users/entities/user.entity";
-import { CardWorker } from "src/cards/entities/cardworker.entity";
+import { CardWorkers } from "src/cards/entities/cardworker.entity";
 
 
 @Entity({
@@ -33,6 +33,6 @@ export class BoardMember {
   @JoinColumn({ name: "boardId", referencedColumnName: "id" })
   board: Board;
 
-  @OneToMany(() => CardWorker, (cardworker) => cardworker.boardmember)
-  cardworker: CardWorker[];
+  @OneToMany(() => CardWorkers, (cardworker) => cardworker.boardmember)
+  cardworker: CardWorkers[];
 }

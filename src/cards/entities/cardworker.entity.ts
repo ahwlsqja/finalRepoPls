@@ -5,7 +5,7 @@ import { BoardMember } from "src/boards/entities/boardmember.entity";
 @Entity({
     name: 'cardworkers'
 })
-export class CardWorker {
+export class CardWorkers {
     @PrimaryGeneratedColumn()
     id: number;
 
