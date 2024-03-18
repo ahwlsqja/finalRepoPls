@@ -3,6 +3,7 @@ import { BaseModel } from "src/common/entities/base.entity";
 import { Comments } from "../comments/entities/comment.entity";
 import { Column, Entity } from "typeorm";
 import { Color } from "src/common/types/color.type";
+import { CardWorker } from "./cardworker.entity";
 
 @Entity({
   name: "cards",
@@ -33,4 +34,9 @@ export class Cards extends BaseModel {
     eager: true,
   })
   comments: Comments[];
+
+  @OneToMany(() => CardWorker, (cardworker) => cardworker.cards, {
+    eager: true,
+  })
+  cardworker: CardWorker[];
 }
