@@ -5,6 +5,7 @@ import { ColumnsModule } from './columns/columns.module';
 import { BoardsModule } from './boards/boards.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { CommonModule } from './common/common.module';
 import Joi from 'joi';
 
 const typeOrmModuleOptions = {
@@ -42,7 +43,7 @@ const typeOrmModuleOptions = {
     UsersModule, 
     BoardsModule, 
     ColumnsModule, 
-    CardsModule],
+    CardsModule, CommonModule],
   controllers: [],
   providers: [],
 })
