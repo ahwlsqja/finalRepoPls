@@ -1,28 +1,29 @@
 
 import { BaseModel } from "src/common/entities/base.entity";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity } from "typeorm";
 
 @Entity({
     name : 'users'
 })
 
 export class Users extends BaseModel {
-    @Column({ type : "varchar" })
+
+    @Column({ type : "varchar", nullable : false })
     email : string
 
-    @Column({ type : 'varchar' })
+    @Column({ type : 'varchar', nullable : false })
     password : string
 
-    @Column({ type : 'boolean'})
+    @Column({ type : 'boolean', nullable : false })
     IsAdmin : boolean
 
-    @Column({ type : 'int' })
+    @Column({ type : 'int', nullable : false })
     emailtoken : number
 
-    @Column({ type : 'boolean' })
+    @Column({ type : 'boolean', default : false })
     IsVaildated : boolean
 
-    @Column({ type : 'boolean' })
+    @Column({ type : 'boolean', default : false })
     sshKey : boolean
 
 }
