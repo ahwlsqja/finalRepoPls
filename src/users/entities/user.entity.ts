@@ -17,13 +17,13 @@ export class Users extends BaseModel {
     @Column({ type : 'boolean', nullable : false })
     IsAdmin : boolean
 
-    @Column({ type : 'int', nullable : true })
+    @Column({ type : 'int', nullable : false })
     emailtoken : number
 
-    @Column({ type : 'boolean', nullable : true })
+    @Column({ type : 'boolean', default : false })
     IsVaildated : boolean
 
-    @Column({ type : 'boolean', nullable : true })
+    @Column({ type : 'boolean', default : false })
     sshKey : boolean
 
 }
