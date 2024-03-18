@@ -1,8 +1,9 @@
-import { BaseModel } from "src/common/entities/base.entity";
+
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Color } from "src/common/types/color.type";
 import { CardWorker } from "./cardworker.entity";
 import { Comments } from "../comments/entities/comment.entity";
+import { BaseModel } from "src/common/entities/basemodel.entitiy";
 
 
 @Entity({
@@ -31,50 +32,15 @@ import { Comments } from "../comments/entities/comment.entity";
     @Column({ type: 'date', nullable: false })
     endDate: Date;
 
-    @OneToMany(() => Comments, (comment) => comment.user, {
+    @OneToMany(() => Comments, (comment) => comment.card, {
         eager: true,
       })
       comments: Comments[];
 
+    @OneToMany(() => CardWorker, (cardworker) => cardworker.cards, {
+      eager: true,
+    })
+    cardworker: CardWorker[];
   }
 
-  @Entity({
-    name: 'check_lists',
-  })
-
-  comments: Comments[];
-
-  @OneToMany(() => CardWorker, (cardworker) => cardworker.cards, {
-    eager: true,
-  })
-  cardworker: CardWorker[];
-}
-
-  export class Check_lists extends BaseModel{
-
-  
-    @Column({ type: 'number', unique: true, nullable: false })
-    cardId: number;
-  
-    @Column({ type: 'varchar', nullable: false })
-    title: string;
-
-    @Column({ type: 'number', nullable: false })
-    orderByCheck: number;
-  }
-
-  @Entity({
-    name: 'check_current',
-  })
-  export class Check_current extends BaseModel{
-  
-    @Column({ type: 'number', unique: true, nullable: false })
-    checkId: number;
-  
-    @Column({ type: 'varchar', nullable: false })
-    title: string;
-
-    @Column({ type: 'boolean', nullable: false })
-    isDone: boolean;
-  }
 
