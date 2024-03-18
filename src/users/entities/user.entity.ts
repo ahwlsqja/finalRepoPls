@@ -1,5 +1,6 @@
+import { Comments } from "src/cards/comments/entities/comment.entity";
 import { BaseModel } from "src/common/entities/base.entity";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({
     name : 'users'
@@ -24,4 +25,8 @@ export class Users extends BaseModel {
     @Column({ type : 'boolean' })
     sshKey : boolean
 
+    @OneToMany(() => Comments, (comment) => comment.user, {
+        eager: true,
+      })
+      comments: Comments[];
 }
