@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CommonController } from './common.controller';
-import { CommonService } from './common.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { CommonController } from "./common.controller";
+import { CommonService } from "./common.service";
 
-describe('CommonController', () => {
+describe("CommonController", () => {
   let controller: CommonController;
 
   beforeEach(async () => {
@@ -14,7 +14,7 @@ describe('CommonController', () => {
     controller = module.get<CommonController>(CommonController);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 });

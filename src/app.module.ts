@@ -1,25 +1,26 @@
-import { UsersModule } from './users/users.module';
-import { CardsModule } from './cards/cards.module';
-import { ColumnsModule } from './columns/columns.module';
-import { BoardsModule } from './boards/boards.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UsersModule } from "./users/users.module";
+import { CardsModule } from "./cards/cards.module";
+import { ColumnsModule } from "./columns/columns.module";
+import { BoardsModule } from "./boards/boards.module";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { CommonModule } from "./common/common.module";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { CommonModule } from './common/common.module';
-import Joi from 'joi';
-import { Module } from '@nestjs/common';
+
+import Joi from "joi";
+import { Module } from "@nestjs/common";
 
 const typeOrmModuleOptions = {
   useFactory: async (
     configService: ConfigService,
   ): Promise<TypeOrmModuleOptions> => ({
-    type: 'mysql',
-    host: configService.get('DB_HOST'),
-    port: configService.get('DB_PORT'),
-    username: configService.get('DB_USERNAME'),
-    password: configService.get('DB_PASSWORD'),
-    database: configService.get('DB_NAME'),
+    type: "mysql",
+    host: configService.get("DB_HOST"),
+    port: configService.get("DB_PORT"),
+    username: configService.get("DB_USERNAME"),
+    password: configService.get("DB_PASSWORD"),
+    database: configService.get("DB_NAME"),
     entities: [],
-    synchronize: configService.get('DB_SYNC'),
+    synchronize: configService.get("DB_SYNC"),
     logging: true,
   }),
   inject: [ConfigService],
@@ -40,10 +41,12 @@ const typeOrmModuleOptions = {
       }),
     }),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
-    UsersModule, 
-    BoardsModule, 
-    ColumnsModule, 
-    CardsModule, CommonModule],
+    UsersModule,
+    BoardsModule,
+    ColumnsModule,
+    CardsModule,
+    CommonModule,
+  ],
   controllers: [],
   providers: [],
 })

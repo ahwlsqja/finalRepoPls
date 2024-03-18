@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CommonService } from './common.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { CommonService } from "./common.service";
 
-describe('CommonService', () => {
+describe("CommonService", () => {
   let service: CommonService;
 
   beforeEach(async () => {
@@ -12,7 +12,7 @@ describe('CommonService', () => {
     service = module.get<CommonService>(CommonService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 });
