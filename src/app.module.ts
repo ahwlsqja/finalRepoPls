@@ -1,11 +1,13 @@
-import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { CardsModule } from './cards/cards.module';
 import { ColumnsModule } from './columns/columns.module';
 import { BoardsModule } from './boards/boards.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CommonModule } from './common/common.module';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+
 import Joi from 'joi';
+import { Module } from '@nestjs/common';
 
 const typeOrmModuleOptions = {
   useFactory: async (
