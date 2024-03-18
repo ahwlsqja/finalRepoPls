@@ -15,10 +15,15 @@ export class Columns extends BaseModel {
     @Column()
     title: string;
 
-    @Column({ type: 'enum', enum: Color, default: Color.BLACK })
+    @Column("enum", {
+        name: "color",
+        enum: Object.values(Color),
+        default: Color.BLACK,
+        nullable: false,
+      })
     color: Color;
 
-    @Column({ type: 'number', nullable: false })
+    @Column({ type: 'bigint', nullable: false })
     orderByColumns: number;
 
     @ManyToOne(() => Board, (board) => board.column, {

@@ -1,8 +1,9 @@
 import { Cards } from "src/cards/entities/card.entity";
 import { BaseModel } from "src/common/entities/basemodel.entitiy";
 import { Users } from "src/users/entities/user.entity";
-import { Column, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
+@Entity('comments')
 export class Comments extends BaseModel {
   @Column({ type: "varchar", nullable: false })
   content: string;

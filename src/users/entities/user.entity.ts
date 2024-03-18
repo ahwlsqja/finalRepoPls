@@ -1,6 +1,7 @@
 import { BoardMember } from "src/boards/entities/boardmember.entity";
 import { Comments } from "src/cards/comments/entities/comment.entity";
-import { BaseModel } from "src/common/entities/base.entity";
+import { BaseModel } from "src/common/entities/basemodel.entitiy";
+
 import { Column, Entity, OneToMany } from "typeorm";
 
 @Entity({
@@ -8,22 +9,22 @@ import { Column, Entity, OneToMany } from "typeorm";
 })
 export class Users extends BaseModel {
 
-  @Column({ type: "varchar", nullable: false })
+  @Column('varchar',{ name: "email", nullable: false })
   email: string;
 
-  @Column({ type: "varchar", nullable: false })
+  @Column('varchar',{ name: "password", nullable: false })
   password: string;
 
-  @Column({ type: "boolean", nullable: false })
+  @Column('boolean', { name: "IsAdmin",  default: false })
   IsAdmin: boolean;
 
-  @Column({ type: "int", nullable: false })
-  emailtoken: number;
+  @Column('varchar', { name: "emailtoken", nullable: false })
+  emailtoken: string;
 
-  @Column({ type: "boolean", default: false })
+  @Column('boolean', { name: "IsVaildated", default: false })
   IsVaildated: boolean;
 
-  @Column({ type: "boolean", default: false })
+  @Column('boolean', { name: "sshKey", default: false })
   sshKey: boolean;
 
   @OneToMany(() => Comments, (comment) => comment.user, {

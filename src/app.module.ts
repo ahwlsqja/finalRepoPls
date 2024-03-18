@@ -19,6 +19,7 @@ import { CardsModule } from "./cards/cards.module";
 import { ColumnsModule } from "./columns/columns.module";
 import { CommonModule } from "./common/common.module";
 import { UsersModule } from "./users/users.module";
+import { BoardMember } from "./boards/entities/boardmember.entity";
 
 
 @Module({
@@ -44,6 +45,7 @@ import { UsersModule } from "./users/users.module";
         BaseModel,
         Check_current,
         Comments,
+        BoardMember
       ],
       synchronize: true,
       logging: true,

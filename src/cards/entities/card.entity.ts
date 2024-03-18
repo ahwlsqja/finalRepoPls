@@ -12,22 +12,27 @@ import { Columns } from "src/columns/entities/column.entity";
   })
   export class Cards extends BaseModel{
   
-    @Column({ type: 'number', unique: true, nullable: false })
+    @Column({ type: 'bigint', unique: true, nullable: false })
     columnId: number;
   
     @Column({ type: 'varchar', nullable: false })
     title: string;
   
-    @Column({ type: 'enum', nullable: false, default: "BLACK" })
+    @Column("enum", {
+      name: "color",
+      enum: Object.values(Color),
+      default: Color.BLACK,
+      nullable: false,
+    })
     color: Color; //진영님꺼 가져오기
 
     @Column({ type: 'varchar', nullable: false })
     content: string;
 
-    @Column({ type: 'number', nullable: false })
+    @Column({ type: 'bigint', nullable: false })
     orderByCards: number;
 
-    @Column({ type: 'number', nullable: false })
+    @Column({ type: 'bigint', nullable: false })
     tag: number;
 
     @Column({ type: 'date', nullable: false })
