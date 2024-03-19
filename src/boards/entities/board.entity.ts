@@ -25,7 +25,6 @@ export class Board extends BaseModel {
   @IsString()
   description: string;
 
-  
   @OneToMany(() => BoardMember, (boardmember) => boardmember.board)
   boardmember: BoardMember[];
 

@@ -1,17 +1,21 @@
-export const ENV_PROTOCOL_KEY = 'PROTOCOL';
+export const ENV_PROTOCOL_KEY = "PROTOCOL";
 
-export const ENV_HOST_KEY = 'HOST';
+export const ENV_HOST_KEY = "HOST";
 
-export const ENV_JWT_SECRET_KEY = 'JWT_SECRET';
+export const ENV_JWT_SECRET_KEY = "JWT_SECRET";
 
-export const ENV_HASH_ROUND_KEY = 'HASH_ROUNDS';
+export const ENV_HASH_ROUND_KEY = "HASH_ROUNDS";
 
-export const ENV_DB_HOST_KEY = 'DB_HOST';
+export const ENV_DB_HOST_KEY = "DB_HOST";
 
-export const ENV_DB_PORT_KEY = 'DB_PORT';
+export const ENV_DB_PORT_KEY = "DB_PORT";
 
-export const ENV_DB_USERNAME_KEY = 'DB_USERNAME';
+export const ENV_DB_USERNAME_KEY = "DB_USERNAME";
 
+<<<<<<< HEAD
 export const ENV_DB_PASSWORD_KEY = 'DB_PASSWORD'
+=======
+export const ENV_DB_PASSWORD_KEY = "DB_PASSWORD";
+>>>>>>> 9face6e6c87ce9008f17cc2f703bccc329183f16
 
-export const ENV_DB_DATABASE_KEY = 'DB_DATABASE';
+export const ENV_DB_DATABASE_KEY = "DB_DATABASE";
