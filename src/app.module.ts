@@ -20,7 +20,7 @@ import { ColumnsModule } from "./columns/columns.module";
 import { CommonModule } from "./common/common.module";
 import { UsersModule } from "./users/users.module";
 import { BoardMember } from "./boards/entities/boardmember.entity";
-
+console.log(process.env)
 
 @Module({
   imports: [
@@ -60,4 +60,4 @@ import { BoardMember } from "./boards/entities/boardmember.entity";
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
