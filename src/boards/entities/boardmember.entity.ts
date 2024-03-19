@@ -9,7 +9,6 @@ import { Board } from "./board.entity";
 import { Users } from "src/users/entities/user.entity";
 import { CardWorkers } from "src/cards/entities/cardworker.entity";
 
-
 @Entity({
   name: "boardmember",
 })
@@ -19,7 +18,6 @@ export class BoardMember {
   // boards n : 1
   @PrimaryGeneratedColumn()
   id: number;
-
 
   @ManyToOne(() => Users, (user) => user.boardmember, {
     onDelete: "CASCADE",
