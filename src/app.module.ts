@@ -1,12 +1,16 @@
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
-import { ENV_DB_DATABASE_KEY, ENV_DB_HOST_KEY, ENV_DB_PASSWORD_KEY, ENV_DB_PORT_KEY, ENV_DB_USERNAME_KEY } from "./common/const/env-keys.const";
+import {
+  ENV_DB_DATABASE_KEY,
+  ENV_DB_HOST_KEY,
+  ENV_DB_PASSWORD_KEY,
+  ENV_DB_PORT_KEY,
+  ENV_DB_USERNAME_KEY,
+} from "./common/const/env-keys.const";
 import { Board } from "./boards/entities/board.entity";
 import { Users } from "./users/entities/user.entity";
-import { CardWorker } from "./cards/entities/cardworker.entity";
+import { CardWorkers } from "./cards/entities/cardworker.entity";
 import { Cards } from "./cards/entities/card.entity";
 import { CheckList } from "./cards/check_lists/entities/check_list.entity";
 import { Columns } from "./columns/entities/column.entity";
@@ -21,15 +25,14 @@ import { CommonModule } from "./common/common.module";
 import { UsersModule } from "./users/users.module";
 import { BoardMember } from "./boards/entities/boardmember.entity";
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: ".env",
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: "postgres",
       host: process.env[ENV_DB_HOST_KEY],
       port: parseInt(process.env[ENV_DB_PORT_KEY]),
       username: process.env[ENV_DB_USERNAME_KEY],
@@ -38,14 +41,14 @@ import { BoardMember } from "./boards/entities/boardmember.entity";
       entities: [
         Board,
         Users,
-        CardWorker,
+        CardWorkers,
         Cards,
         CheckList,
         Columns,
         BaseModel,
         Check_current,
         Comments,
-        BoardMember
+        BoardMember,
       ],
       synchronize: true,
       logging: true,
@@ -57,10 +60,7 @@ import { BoardMember } from "./boards/entities/boardmember.entity";
     CommonModule,
     UsersModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
-//adfasfsdaf
-//adfasfadff
-//adfasdf
