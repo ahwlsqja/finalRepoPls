@@ -6,6 +6,7 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UpdatehostDto } from 'src/users/dto/update-token';
 import { Users } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class AuthService {

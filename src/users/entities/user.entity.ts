@@ -8,26 +8,25 @@ import { Column, Entity, OneToMany } from "typeorm";
   name: "users",
 })
 export class Users extends BaseModel {
-
-  @Column('varchar',{ name: "email", nullable: false })
+  @Column("varchar", { name: "email", nullable: false })
   email: string;
 
-  @Column('varchar',{ name: "password", nullable: false, select : true })
+  @Column("varchar", { name: "password", nullable: false })
   password: string;
   
   @Column('varchar',{ name: "name", nullable: false })
   name: string;
 
-  @Column('boolean', { name: "IsAdmin",  default: false })
+  @Column("boolean", { name: "IsAdmin", default: false })
   IsAdmin: boolean;
 
-  @Column('varchar', { name: "emailtoken", nullable : true })
+  @Column("varchar", { name: "emailtoken", nullable: false })
   emailtoken: string;
 
-  @Column('boolean', { name: "IsVaildated", default: false })
+  @Column("boolean", { name: "IsVaildated", default: false })
   IsVaildated: boolean;
 
-  @Column('boolean', { name: "sshKey", default: false })
+  @Column("boolean", { name: "sshKey", default: false })
   sshKey: boolean;
 
   @OneToMany(() => Comments, (comment) => comment.user, {

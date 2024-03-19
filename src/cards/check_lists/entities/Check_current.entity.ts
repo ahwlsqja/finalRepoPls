@@ -1,4 +1,3 @@
-
 import { BaseModel } from "src/common/entities/basemodel.entitiy";
 import { Column, Entity } from "typeorm";
 
