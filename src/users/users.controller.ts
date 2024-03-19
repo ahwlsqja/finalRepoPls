@@ -30,6 +30,7 @@ export class UsersController {
   async update(@Param("id") id: number, @Body() body, updateUserDto: UpdateUserDto, @Req() req) {
     console.log(req.sub);
     console.log('---------');
+    console.log('---------');
     console.log(req.users);
     console.log(req.user);
     
