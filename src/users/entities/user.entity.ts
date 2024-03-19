@@ -12,13 +12,16 @@ export class Users extends BaseModel {
   @Column('varchar',{ name: "email", nullable: false })
   email: string;
 
-  @Column('varchar',{ name: "password", nullable: false })
+  @Column('varchar',{ name: "password", nullable: false, select : true })
   password: string;
+  
+  @Column('varchar',{ name: "name", nullable: false })
+  name: string;
 
   @Column('boolean', { name: "IsAdmin",  default: false })
   IsAdmin: boolean;
 
-  @Column('varchar', { name: "emailtoken", nullable: false })
+  @Column('varchar', { name: "emailtoken", nullable : true })
   emailtoken: string;
 
   @Column('boolean', { name: "IsVaildated", default: false })

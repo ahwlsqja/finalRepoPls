@@ -1,42 +1,61 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common'
 import { UsersService } from "./users.service";
-import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
+  
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    return await this.usersService.findAll();
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.usersService.findOne(+id);
+  async findOne(@Param("id") id: number) {
+    return await this.usersService.findOne(id);
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  async update(@Param("id") id: number, @Body() body, updateUserDto: UpdateUserDto, @Req() req) {
+    console.log(req.sub);
+    console.log('---------');
+    console.log(req.users);
+    console.log(req.user);
+    
+    const password = body.password;
+    const user = req.user; 
+   
+
+    if(user !== id){
+      throw new Error("유저 아이디가 맞지 않습니다.");
+    }
+
+    return await this.usersService.update(id, password, updateUserDto);
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.usersService.remove(+id);
+  async remove(@Param("id") id: number, @Body() body, @Req() req) {
+    const password = body.password;
+    const user = req.users.id;
+
+    if(user !== id){
+      throw new Error("유저 아이디가 맞지 않습니다.");
+    }
+
+    return await this.usersService.remove(id, password);
   }
+
+  
+
 }
