@@ -21,6 +21,12 @@ export class BoardMember {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column("int", { name: 'userId', nullable: false})
+  userId: number;
+
+  @Column("int", { name: 'boardId', nullable: false})
+  boardId: number;
+
   @Column("boolean", { name: "isCreateUser", nullable: false, default: false})
   isCreateUser: boolean;
 
