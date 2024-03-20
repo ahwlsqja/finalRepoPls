@@ -36,4 +36,9 @@ export class Users extends BaseModel {
     onDelete: "CASCADE",
   })
   boardmember: BoardMember[];
+
+  @Column('varchar', { name: "name",nullable: false})
+  name: string;
 }
+
+

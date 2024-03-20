@@ -1,4 +1,5 @@
 import {
+  Column,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -20,6 +21,11 @@ export class BoardMember {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column("boolean", { name: "isCreateUser", nullable: false, default: false})
+  isCreateUser: boolean;
+
+  @Column("boolean", { name: "isAccepted", nullable: false, default: false})
+  isAccepted: boolean;
 
   @ManyToOne(() => Users, (user) => user.boardmember, {
     onDelete: "CASCADE",

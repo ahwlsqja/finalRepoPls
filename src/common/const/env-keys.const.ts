@@ -15,3 +15,7 @@ export const ENV_DB_USERNAME_KEY = 'DB_USERNAME';
 export const ENV_DB_PASSWORD_KEY = 'DB_PASSWORD';
 
 export const ENV_DB_DATABASE_KEY = 'DB_DATABASE';
+
+export const ENV_EMAIL_ID_USER = 'GOOGLE_ID'
+
+export const ENV_EMAIL_USER_PASS = 'lbdizghpssvslzlq'

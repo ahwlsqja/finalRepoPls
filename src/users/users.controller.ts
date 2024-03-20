@@ -1,42 +1,58 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common'
-import { UsersService } from "./users.service";
-import { CreateUserDto } from "./dto/create-user.dto";
+import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+import { User } from "src/common/decorator/user.decorator";
+import { Users } from "./entities/user.entity";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { UsersService } from "./users.service";
 
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
+  
+  @UseGuards(AuthGuard('jwt'))
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(@User() user : Users) {
+
+    if(user.IsAdmin === false){
+      throw new Error("권한이 존재하지 않습니다.");
+    }
+
+    return await this.usersService.findAll();
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.usersService.findOne(+id);
+  @Get("profile/:id")
+  async findOne(@Param("id") id: number) {
+    return await this.usersService.findOne(id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @UseGuards(AuthGuard('jwt'))
+  @Patch()
+  async update(@User() user : Users, 
+  @Body() updateUserDto: UpdateUserDto) {
+    return await this.usersService.update(user.id, updateUserDto);
   }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.usersService.remove(+id);
+  @UseGuards(AuthGuard("jwt"))
+  @Patch("token")
+  async tokenupdate(
+    @Body() body ,
+    @User() user: Users,
+  ) {
+    const email = body.email;
+    const emailtoken = body.emailtoken;
+
+    if(emailtoken !== user.emailtoken){
+      throw new Error("인증 번호가 맞지 않습니다.");
+    }
+    
+    return await this.usersService.tokenupdate(email);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete()
+  async remove(@User() user : Users) {
+    return await this.usersService.remove(user.id);
+  }
+
 }

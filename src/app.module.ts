@@ -1,8 +1,6 @@
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
 import { ENV_DB_DATABASE_KEY, ENV_DB_HOST_KEY, ENV_DB_PASSWORD_KEY, ENV_DB_PORT_KEY, ENV_DB_USERNAME_KEY } from "./common/const/env-keys.const";
 import { Board } from "./boards/entities/board.entity";
 import { Users } from "./users/entities/user.entity";
@@ -20,6 +18,12 @@ import { ColumnsModule } from "./columns/columns.module";
 import { CommonModule } from "./common/common.module";
 import { UsersModule } from "./users/users.module";
 import { BoardMember } from "./boards/entities/boardmember.entity";
+import { CacheModule } from "@nestjs/cache-manager";
+import { CacheConfigService } from "./cache/cacheConfig.service";
+import { MailModule } from './mail/mail.module';
+import { APP_GUARD } from "@nestjs/core";
+import { AuthGuard } from "@nestjs/passport";
+import { RolesGuard } from "./auth/guard/roles.guard";
 
 
 @Module({
@@ -50,15 +54,28 @@ import { BoardMember } from "./boards/entities/boardmember.entity";
       synchronize: true,
       logging: true,
     }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useClass: CacheConfigService
+    }),
     AuthModule,
     BoardsModule,
     CardsModule,
     ColumnsModule,
     CommonModule,
     UsersModule,
+    MailModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard('jwt')
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}
 //adfasfsdaf

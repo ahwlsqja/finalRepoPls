@@ -1,26 +1,63 @@
 import { Injectable } from "@nestjs/common"
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Users } from "./entities/user.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return "This action adds a new user";
+  constructor(@InjectRepository(Users) 
+              private userRepository : Repository<Users>){}
+  
+
+  async findAll() {
+    return await this.userRepository.find({ select : ['id', 'email', 'name', 'emailtoken', 'createdAt', 'updatedAt', 'IsAdmin', 'IsVaildated', 'sshKey'] });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findOne(id: number) {
+    const user = await this.userRepository.findOne({ where : { id },
+    select: ['id', 'email', 'name', 'emailtoken', 'createdAt', 'updatedAt', 'IsAdmin', 'IsVaildated', 'sshKey']});
+    if(!user){
+      throw new Error("유저가 존재하지 않습니다.");
+    }
+    return user;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async update(userId : number, updateUserDto: UpdateUserDto) {
+
+    if(!userId){
+      throw new Error("유저가 존재하지 않습니다.");
+    }
+
+    return await this.userRepository.update(userId, updateUserDto);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async tokenupdate(email : string) {
+    const user = await this.userRepository.findOne({ where : { email }});
+
+    if(!user){
+      throw new Error("유저가 존재하지 않습니다.");
+    }
+
+    if(user.IsVaildated === true){
+      throw new Error("이미 호스트 인증을 받으셨습니다.");
+    }
+
+    user.IsVaildated = true
+    return await this.userRepository.save(user);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(userId : number) {
+    return await this.userRepository.delete(userId);
   }
+
+  async findid (id : number) {
+    return await this.userRepository.findOne({ where : { id } });
+  }
+
+  async findemail(email : string){
+    return await this.userRepository.findOne({ where : { email } });
+  }
+
 }

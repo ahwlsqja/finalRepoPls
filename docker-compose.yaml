@@ -10,3 +10,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
+
+  some-redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"

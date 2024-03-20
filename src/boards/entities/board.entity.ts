@@ -20,6 +20,8 @@ export class Board extends BaseModel {
   @IsNotEmpty({ message: "색을 입력해주세요" })
   color: Color;
 
+  @Column("varchar", { name: 'title', nullable: false})
+  title: string
   // 설명
   @Column("varchar", { name: "description", nullable: false })
   @IsString()
