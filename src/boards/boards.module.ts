@@ -4,14 +4,15 @@ import { BoardsController } from "./boards.controller";
 import { Board } from "./entities/board.entity";
 import { BoardMember } from "./entities/boardmember.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { BoardsMemberService } from "./board.member.service";
+
 import { MailModule } from "src/mail/mail.module";
+import { UsersModule } from "src/users/users.module";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Board, BoardMember]),
-  MailModule],
+  MailModule, UsersModule],
 
   controllers: [BoardsController],
-  providers: [BoardsService, BoardsMemberService],
+  providers: [BoardsService],
 })
 export class BoardsModule {}

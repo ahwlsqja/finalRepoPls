@@ -1,12 +1,16 @@
 
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { CreateBoardDto } from "./dto/create-board.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Board } from "./entities/board.entity";
-import { Brackets, DataSource, Repository } from "typeorm";
+import { Brackets, DataSource, Not, Repository } from "typeorm";
 import { BoardMember } from "./entities/boardmember.entity";
 import { Users } from "src/users/entities/user.entity";
 import { InvitationDto } from "./dto/invite.dto";
+import { UsersService } from "src/users/users.service";
+import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager";
+import { MailService } from "src/mail/mail.service";
+import _ from "lodash";
 
 @Injectable()
 export class BoardsService {
@@ -15,6 +19,9 @@ export class BoardsService {
     private readonly boardRepository: Repository<Board>,
     @InjectRepository(BoardMember)
     private readonly boardMemberRepository: Repository<BoardMember>,
+    private readonly usersService: UsersService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private readonly mailService: MailService,
     private dataSource: DataSource,
   ){}
 
@@ -56,14 +63,9 @@ export class BoardsService {
 
 // 보드 유저인지 유효성 검사 api
 async getBoardMember(userId: number, boardId: number){
-  return await this.boardMemberRepository.createQueryBuilder('BoardMember')
-  .where('BoardMember.userId = :userId', { userId })
-  .andWhere('BoardMember.boardId = :boardId', { boardId })
-  .andWhere(new Brackets(qb => {
-    qb.where('BoardMember.isAccepted = :isAccepted', { isAccepted: true })
-      .orWhere('BoardMember.isCreateUser = :isCreateUser', { isCreateUser: true});
-  }))
-  .getOne();
+  return await this.boardMemberRepository.findOne({
+    where: { user: { id: userId }, board: { id: boardId } },
+  });
 }
 
 
@@ -170,11 +172,186 @@ async updateBoard(userId: number,
     }
   }
 
-  // // 보드에 맴버 초대
-  // async invite(boardId: number, userId: number, invitationDto: InvitationDto, user: Users) {
-  //   try{
-  //     const { memberEmail } = invitationDto
-  //     const userOnly: Users = await this.get
-  //   }
-  // }
+  // 보드에 맴버 초대
+  async invite(
+    boardId: number, 
+    invitationDto: InvitationDto, 
+    user: Users) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction('READ COMMITTED'); 
+    try{
+      const { memberEmail } = invitationDto
+
+      // 1. 로그인한 유저가 호스트인지 검사
+      const userOnly = await this.usersService.findemail(user.email) // 현재 로그
+      const boardOnly = await queryRunner.manager.findOne(Board, {
+        where: { id: boardId },
+        relations: ['boardmember', 'boardmember.user']
+      });
+      await this.checkUserIsHost(userOnly, boardOnly)
+      if(!boardOnly) 
+      {
+        throw new Error('보드가 없습니다.')
+      }
+
+      // 2. 초대할려는 유저의 존재성 검사
+      const invitedUser = await this.usersService.findemail(memberEmail)
+      if(!invitedUser)
+      {
+        throw new Error("초대하려는 유저가 없습니다.")
+      }
+
+      // 3. 초대하려는 유저가 이미 초대되었는지 검사
+      await this.alreadyInviteUser(invitedUser, boardOnly)
+      
+
+      // 4. 유저 초대
+      await this.inviteMember(memberEmail, boardOnly.id)
+
+      await queryRunner.commitTransaction();
+    }catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  // 유저가 이메일 인증시 초대해줌(보드에 대한 권한줌)
+  async authenticateEmail(
+    memberEmail: string,
+    authenticateEmailCode: number
+    ) {
+    // 1. 캐시에서 인증 번호 꺼내서 확인
+    const cacheValue = await this.cacheManager.get<{authenticateEmailCode: number, boardId: number}>(memberEmail);
+   
+    // 2. 인증 번호 검증
+    if(!cacheValue) {
+      throw new NotFoundException('해당 메일로 전송된 인증번호가 없습니다.')
+    } else if (cacheValue.authenticateEmailCode !== authenticateEmailCode) {
+      throw new UnauthorizedException('틀림')
+    }
+
+    // 3. 인증 성공하면 캐시 삭제함
+    await this.cacheManager.del(memberEmail);
+
+    // 트랜 잭션 시작함. //
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try{
+    // 4. 유저 존재성 검사  
+    const newBoardUser = await queryRunner.manager.findOneBy(Users , {email: memberEmail})
+
+    if(!newBoardUser)
+    {
+      throw new Error("유저가 없습니다. 권한을 부여할 수 없습니다. 다시 시도해주세요")
+    }
+
+    // 5. 유저가 있으면 보드 맴버로 추가 - 캐시에서 가져온 BoardId를 사용함
+    const HostUser = queryRunner.manager.create(BoardMember,
+      {
+      user: { id: newBoardUser.id },
+      board: { id: cacheValue.boardId },
+      isAccepted: true,
+    });
+
+    await this.boardMemberRepository.save(HostUser)
+
+    await queryRunner.commitTransaction();
+    return HostUser;
+    } catch(error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+
+  // 유저가 그 보드의 호스트 인지 검사
+  async checkUserIsHost(user: Users, board: Board){
+    const compared = await this.boardMemberRepository.findOne({
+      where: { 
+            userId: user.id, 
+            boardId: board.id
+          },
+    });
+
+    if(!compared || compared.isCreateUser == false)
+    {
+      throw new Error("보드 호스트가 아닙니다.")
+    }
+
+    return compared
+  }
+
+
+  // 보드의 속해있는 유저인지 검사
+  async alreadyInviteUser(user: Users, board: Board)
+  {
+    const compared = await this.boardMemberRepository.findOne({
+      where: { 
+            userId: user.id, 
+            boardId: board.id
+          },
+    });
+
+    if(compared)
+    {
+      throw new Error('이미 초대된 유저입니다.')
+    }
+  }
+
+  // 맴버 초대
+  async inviteMember(memberEmail: string, boardId: number){
+    // 1. 인증번호 생성
+    const authenticateEmailCode = this.generateRandomNumber();
+
+    // 2. 이메일 인증하고 초대할 때 쓸려고 boardId 캐싱
+    const cacheValue = {
+      authenticateEmailCode,
+      boardId
+    }
+    // 캐싱은 {memberEmail: cacheValue} 로 레디스에 저장 
+    await this.cacheManager.set(memberEmail, cacheValue, 3600);
+
+    // 3. 이메일로 인증번호 보냄
+    await this.sendCode(memberEmail, authenticateEmailCode)
+  }
+
+  // 이메일 보내기
+  async sendCode(memberEmail: string, authenticateEmailCode: number) {
+    await this.mailService.sendauthenticateEmailCodeToEmail(memberEmail, authenticateEmailCode)
+    return authenticateEmailCode
+  }
+
+  
+  private generateRandomNumber(): number {
+    var minm = 100000;
+    var maxm = 999999;
+    return Math.floor(Math.random() * (maxm - minm + 1)) + minm;
+  }
+
+
+
+  // 유저가 그 보드의 호스트 인지 검사
+  async checkUserIsHostForGuard(userId: number, boardId: number){
+    const compared = await this.boardMemberRepository.findOne({
+      where: { 
+            userId, 
+            boardId
+          },
+    });
+
+    if(!compared || compared.isCreateUser == false)
+    {
+      throw new Error("보드 호스트가 아닙니다.")
+    }
+
+    return compared
+  }
+  
 }
