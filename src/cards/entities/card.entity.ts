@@ -54,6 +54,7 @@ import { Columns } from "src/columns/entities/column.entity";
     })
     @JoinColumn({ name: 'columnId', referencedColumnName: 'id'})
     column: Columns
+  userId: number;
   }
 
 
