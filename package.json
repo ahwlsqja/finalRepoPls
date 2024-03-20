@@ -45,6 +45,7 @@
     "cache-manager-redis-yet": "^4.2.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "cookie-parser": "^1.4.6",
     "express-session": "^1.18.0",
     "joi": "^17.12.2",
     "lodash": "^4.17.21",

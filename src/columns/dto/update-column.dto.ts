@@ -1,4 +1,6 @@
-import { PartialType } from "@nestjs/mapped-types";
-import { CreateColumnDto } from "./create-column.dto";
+// src/columns/dto/update-column.dto.ts
 
-export class UpdateColumnDto extends PartialType(CreateColumnDto) {}
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateColumnDto } from './create-column.dto';
+
+export class UpdateColumnDto extends PartialType(CreateColumnDto) { }
