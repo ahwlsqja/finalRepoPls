@@ -1,3 +1,5 @@
+// ./src/boards/entities/column.entity
+
 import { IsString } from "class-validator";
 import { Board } from "src/boards/entities/board.entity";
 import { Cards } from "src/cards/entities/card.entity";
@@ -7,7 +9,6 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   OneToMany,
 } from "typeorm";
@@ -15,7 +16,7 @@ import {
 @Entity("columns")
 export class Columns extends BaseModel {
   @IsString()
-  @Column({ unsigned: true })
+  @Column({ unsigned: true, nullable: true })
   boardId: number;
 
   @Column()
@@ -29,11 +30,10 @@ export class Columns extends BaseModel {
   })
   color: Color;
 
-  @Column({ type: "bigint", nullable: false })
+  @Column({ type: "int", nullable: false, default: 1 })
   orderByColumns: number;
 
   @ManyToOne(() => Board, (board) => board.column, {
-    nullable: false,
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "boardId", referencedColumnName: "id" })

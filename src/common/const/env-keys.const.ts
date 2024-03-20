@@ -12,10 +12,6 @@ export const ENV_DB_PORT_KEY = "DB_PORT";
 
 export const ENV_DB_USERNAME_KEY = "DB_USERNAME";
 
-<<<<<<< HEAD
-export const ENV_DB_PASSWORD_KEY = 'DB_PASSWORD'
-=======
 export const ENV_DB_PASSWORD_KEY = "DB_PASSWORD";
->>>>>>> 9face6e6c87ce9008f17cc2f703bccc329183f16
 
 export const ENV_DB_DATABASE_KEY = "DB_DATABASE";

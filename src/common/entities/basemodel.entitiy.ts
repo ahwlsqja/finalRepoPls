@@ -5,7 +5,7 @@ import {
 } from "typeorm";
 
 export abstract class BaseModel {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
   @UpdateDateColumn()
