@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common"
-import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Users } from "./entities/user.entity";
@@ -12,12 +11,12 @@ export class UsersService {
   
 
   async findAll() {
-    return await this.userRepository.find({ select : ['id', 'email', 'name', 'emailtoken', 'createdAt', 'updatedAt', 'IsAdmin', 'IsVaildated', 'sshKey'] });
+    return await this.userRepository.find({ select : ['id', 'email', 'password', 'name', 'IsAdmin', 'IsVaildated', 'sshKey', 'createdAt', 'updatedAt'] });
   }
 
   async findOne(id: number) {
     const user = await this.userRepository.findOne({ where : { id },
-    select: ['id', 'email', 'name', 'emailtoken', 'createdAt', 'updatedAt', 'IsAdmin', 'IsVaildated', 'sshKey']});
+    select: ['id', 'email', 'name', 'IsVaildated', 'createdAt', 'updatedAt']});
     if(!user){
       throw new Error("유저가 존재하지 않습니다.");
     }

@@ -1,15 +1,16 @@
 import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
 import { User } from "src/common/decorator/user.decorator";
 import { Users } from "./entities/user.entity";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UsersService } from "./users.service";
+import { AuthGuard } from "@nestjs/passport";
+import { adminGuard } from "./guard/adminguard";
 
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  
+
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAll(@User() user : Users) {
@@ -20,6 +21,7 @@ export class UsersController {
 
     return await this.usersService.findAll();
   }
+
 
   @Get("profile/:id")
   async findOne(@Param("id") id: number) {
@@ -33,7 +35,8 @@ export class UsersController {
     return await this.usersService.update(user.id, updateUserDto);
   }
 
-  @UseGuards(AuthGuard("jwt"))
+
+  @UseGuards(AuthGuard('jwt'))
   @Patch("token")
   async tokenupdate(
     @Body() body ,
