@@ -35,7 +35,7 @@ export class CommentsService {
     }
   }
 
-  async getAllCommentsByCardId(cardId: number) {
+  async getCommentByCardId(cardId: number) {
     const comments = await this.cardsRepository.findOne({
       where: {
         id: cardId,

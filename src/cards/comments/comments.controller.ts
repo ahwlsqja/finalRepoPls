@@ -47,8 +47,8 @@ export class CommentsController {
    */
   @ApiOperation({ summary: "카드 내 댓글 목록 조회 API " })
   @Get("/:cardId")
-  async getAllCommentsByCardId(@Param("cardId") cardId: number) {
-    const data = await this.commentsService.getAllCommentsByCardId(cardId);
+  async getCommentByCardId(@Param("cardId") cardId: number) {
+    const data = await this.commentsService.getCommentByCardId(cardId);
     return {
       statusCode: HttpStatus.OK,
       message: "댓글 목록 조회에 성공하였습니다.",
