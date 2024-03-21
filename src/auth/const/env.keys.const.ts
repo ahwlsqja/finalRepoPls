@@ -1,0 +1,1 @@
+export const ENV_sshKey_KEY = 'ssKeys';

@@ -18,4 +18,4 @@ export const ENV_DB_DATABASE_KEY = 'DB_DATABASE';
 
 export const ENV_EMAIL_ID_USER = 'GOOGLE_ID'
 
-export const ENV_EMAIL_USER_PASS = 'lbdizghpssvslzlq'
+export const ENV_EMAIL_USER_PASS = 'GOOGLE_PASS'

@@ -18,14 +18,14 @@ export class Users extends BaseModel {
   @Column('boolean', { name: "IsAdmin",  default: false })
   IsAdmin: boolean;
 
-  @Column('varchar', { name: "emailtoken", nullable: false })
+  @Column('varchar', { name: "emailtoken", nullable: true })
   emailtoken: string;
 
   @Column('boolean', { name: "IsVaildated", default: false })
   IsVaildated: boolean;
 
-  @Column('boolean', { name: "sshKey", default: false })
-  sshKey: boolean;
+  @Column('varchar', { name: "sshKey", nullable : true })
+  sshKey: string;
 
   @OneToMany(() => Comments, (comment) => comment.user, {
     eager: true,
