@@ -47,9 +47,11 @@ export class CommentsController {
    */
   @ApiOperation({ summary: "카드 내 댓글 상세 조회 API " })
   @Get("/:cardId")
+
   async getCommentByCardId(
     @Param("cardId") cardId: number
     ) {
+
     const data = await this.commentsService.getCommentByCardId(cardId);
     return {
       statusCode: HttpStatus.OK,
