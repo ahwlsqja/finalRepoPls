@@ -69,5 +69,7 @@ export class CheckListsController {
    * 1. createCheckCurrent - 할일 생성 API
    * 2. updateCheckCurrent - 할일 수정 API
    * 3. deleteCheckCurrent - 할일 삭제 API
+   * 
+   * 카드-체크리스트-댓글 조회
    */
 }

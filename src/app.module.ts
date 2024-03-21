@@ -67,14 +67,14 @@ import { RolesGuard } from "./auth/guard/roles.guard";
     MailModule,
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard('jwt')
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard('jwt')
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
   ],
 })
 export class AppModule {}

@@ -12,7 +12,6 @@ import axios from 'axios';
  * - 특정 카드의 컬럼 이동시 ( 상태 변경 : BackLog -> In Progress 또는 In Progress -> Done) 
  * - 특정 카드의 작업자 변경시
  * - 특정 카드의 마감일 변경시
- * - 
  */
 
 
