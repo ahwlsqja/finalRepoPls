@@ -5,6 +5,7 @@ import { CardWorker } from "./cardworker.entity";
 import { Comments } from "../comments/entities/comment.entity";
 import { BaseModel } from "src/common/entities/basemodel.entitiy";
 import { Columns } from "src/columns/entities/column.entity";
+import { CheckList } from "../check_lists/entities/checkList.entity";
 
 
 @Entity({
@@ -48,13 +49,18 @@ import { Columns } from "src/columns/entities/column.entity";
     })
     cardworker: CardWorker[];
 
+    @OneToMany(() => CheckList, (checkList) => checkList.card, {
+      eager: true,
+    })
+    checkLists: CheckList[];
+
     @ManyToOne(() => Columns, (column) => column.cards, {
       nullable: false,
       onDelete: 'CASCADE',
     })
     @JoinColumn({ name: 'columnId', referencedColumnName: 'id'})
     column: Columns
-  userId: number;
+    userId: number;
   }
 
 

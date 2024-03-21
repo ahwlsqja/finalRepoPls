@@ -28,8 +28,8 @@ export class CommentsController {
     @Body() createCommentDto: CreateCommentDto,
   ) {
     const data = await this.commentsService.createComment(
-      cardId, // req.params의 cardId
       user.id, // req.user의 id
+      cardId, // req.params의 cardId
       createCommentDto.content, //dto의 content
     );
 
@@ -45,13 +45,15 @@ export class CommentsController {
    * - /cards에서 Card 조회하면, Comments 목록이 나오도록하면,
    * - 각 도메인에서 getAll-, get-ById API 갯수를 줄일 수 있을듯.
    */
-  @ApiOperation({ summary: "카드 내 댓글 목록 조회 API " })
+  @ApiOperation({ summary: "카드 내 댓글 상세 조회 API " })
   @Get("/:cardId")
-  async getAllCommentsByCardId(@Param("cardId") cardId: number) {
-    const data = await this.commentsService.getAllCommentsByCardId(cardId);
+  async getCommentByCardId(
+    @Param("cardId") cardId: number
+    ) {
+    const data = await this.commentsService.getCommentByCardId(cardId);
     return {
       statusCode: HttpStatus.OK,
-      message: "댓글 목록 조회에 성공하였습니다.",
+      message: "댓글 상세 조회에 성공하였습니다.",
       data,
     };
   }

@@ -8,6 +8,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 @Module({
   imports: [TypeOrmModule.forFeature([Comments])],
   controllers: [CommentsController],
-  providers: [CommentsService],
+  providers: [CommentsService]
 })
 export class CommentsModule {}
