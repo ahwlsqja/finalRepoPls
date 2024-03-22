@@ -61,18 +61,18 @@ export class CommentsService {
     }
   }
 
-  async getCommentByCardId(cardId: number) {
-    const comments = await this.cardsRepository.findOne({
+  async getCommentByCommentId(commentId: number) {
+    const comment = await this.cardsRepository.findOne({
       where: {
-        id: cardId,
+        id: commentId,
       },
     });
 
-    if (!comments) {
-      throw new NotFoundException(`존재하지 않는 카드 ${cardId} 입니다.`);
+    if (!comment) {
+      throw new NotFoundException(`존재하지 않는 댓글 ${commentId} 입니다.`);
     }
 
-    return comments;
+    return comment;
   }
 
   async updateComment(

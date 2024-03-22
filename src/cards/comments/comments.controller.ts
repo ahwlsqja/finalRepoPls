@@ -20,7 +20,7 @@ import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
 
 @UseGuards(AuthGuard('jwt'))
 @ApiTags("Comments")
-@Controller("boards/:boardId/columns/:columnId/cards/:cardId/comments")
+@Controller(":boardId/:columnId/:cardId/comments")
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) { }
 
@@ -55,13 +55,12 @@ export class CommentsController {
    * - 각 도메인에서 getAll-, get-ById API 갯수를 줄일 수 있을듯.
    */
   @ApiOperation({ summary: "카드 내 댓글 상세 조회 API " })
-  @Get("/:cardId")
+  @Get("/:commentId")
 
-  async getCommentByCardId(
-    @Param("cardId") cardId: number
+  async getCommentByCommentId(
+    @Param("commentId") commentId: number
     ) {
-
-    const data = await this.commentsService.getCommentByCardId(cardId);
+    const data = await this.commentsService.getCommentByCommentId(commentId);
     return {
       statusCode: HttpStatus.OK,
       message: "댓글 상세 조회에 성공하였습니다.",
@@ -91,7 +90,7 @@ export class CommentsController {
   @ApiOperation({ summary: "카드 내 댓글 삭제 API " })
   @Delete("/:commentId")
   async deleteComment(
-    @User() user: Users, // @커스텀데코레이터에서 user 정보 가져오기
+    @User() user: Users,
     @Param("commentId") commentId: number,
   ) {
     await this.commentsService.deleteComment(user.id, commentId);

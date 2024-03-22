@@ -27,6 +27,7 @@ import { NotificationModule } from './notification/notification.module';
 import { CheckLists } from "./cards/check_lists/entities/checkList.entity";
 import { AuthTokenGuard } from "./auth/guard/auth.guard";
 import { CommentsModule } from "./cards/comments/comments.module";
+import { CheckListsModule } from "./cards/check_lists/checkLists.module";
 
 
 
@@ -78,6 +79,7 @@ import { CommentsModule } from "./cards/comments/comments.module";
     ColumnsModule,
     CommonModule,
     CommentsModule,
+    CheckListsModule,
     UsersModule,
     MailModule,
     NotificationModule,
