@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { Users } from 'src/users/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './jwt.strategy';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [JwtModule.registerAsync({
@@ -13,7 +14,7 @@ import { JwtStrategy } from './jwt.strategy';
       secret: config.get<string>('JWT_SECRET'),
     }),
     inject: [ConfigService],
-  }),TypeOrmModule.forFeature([Users])],
+  }),TypeOrmModule.forFeature([Users]), MailModule],
   providers: [JwtStrategy, AuthService],
   controllers: [AuthController],
   exports:[JwtStrategy, AuthService]

@@ -22,7 +22,6 @@ import { CacheModule } from "@nestjs/cache-manager";
 import { CacheConfigService } from "./cache/cacheConfig.service";
 import { MailModule } from './mail/mail.module';
 import { APP_GUARD } from "@nestjs/core";
-import { AuthGuard } from "@nestjs/passport";
 import { RolesGuard } from "./auth/guard/roles.guard";
 
 
@@ -69,15 +68,8 @@ import { RolesGuard } from "./auth/guard/roles.guard";
   providers: [
     {
       provide: APP_GUARD,
-      useClass: AuthGuard('jwt')
-    },
-    {
-      provide: APP_GUARD,
       useClass: RolesGuard,
     },
   ],
 })
 export class AppModule {}
-//adfasfsdaf
-//adfasfadff
-//adfasdf

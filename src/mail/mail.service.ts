@@ -33,6 +33,17 @@ export class MailService {
             html: `<h1>인증 코드를 입력해야 보드에 참여할 수 있습니다.</h1><br/>${code}`
         };
 
-        return await this.transporter.sendEmail(emailOptions)
+        return await this.transporter.sendMail(emailOptions)
+    }
+
+    async sendemailtoken(email: string, emailtoken : string) {
+        const emailOptions: EmailOptions = {
+            from: this.configService.get<string>(ENV_EMAIL_ID_USER),
+            to: email,
+            subject: '이메일 인증번호',
+            html: `<p>이메일 인증번호를 입력해주세요 : </p>${emailtoken}`
+        };
+
+        return await this.transporter.sendMail(emailOptions)
     }
 }

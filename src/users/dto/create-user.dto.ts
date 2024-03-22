@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator"
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator"
 
 export class CreateUserDto {
 
@@ -17,5 +17,9 @@ export class CreateUserDto {
     @IsString()
     @IsNotEmpty({ message : "이름을 기재 해주세요." })
     name : string
+
+    @IsString()
+    @IsOptional()
+    sshKey? : string
 
 }
