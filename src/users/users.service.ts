@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common"
+import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Users } from "./entities/user.entity";
 import { Repository } from "typeorm";
-import { User } from "src/common/decorator/user.decorator";
 
 @Injectable()
 export class UsersService {
@@ -12,34 +12,24 @@ export class UsersService {
   
 
   async findAll() {
-    return await this.userRepository.find();
+    return await this.userRepository.find({ select : ['id', 'email', 'name', 'emailtoken', 'createdAt', 'updatedAt', 'IsAdmin', 'IsVaildated', 'sshKey'] });
   }
 
   async findOne(id: number) {
     const user = await this.userRepository.findOne({ where : { id },
-    select: ['id', 'email', 'name', 'IsVaildated', 'createdAt', 'updatedAt']});
+    select: ['id', 'email', 'name', 'emailtoken', 'createdAt', 'updatedAt', 'IsAdmin', 'IsVaildated', 'sshKey']});
     if(!user){
       throw new Error("유저가 존재하지 않습니다.");
     }
-
-    if(user.IsVaildated === false){
-      throw new Error("이메일 인증을 거쳐야 하는 회원입니다.");
-    }
-
     return user;
   }
 
   async update(userId : number, updateUserDto: UpdateUserDto) {
-    const user = await this.findid(userId);
 
-    if(!user){
+    if(!userId){
       throw new Error("유저가 존재하지 않습니다.");
     }
-    
-    if(user.IsVaildated === false){
-      throw new Error("이메일 인증을 거쳐야 하는 회원입니다.");
-    }
-  
+
     return await this.userRepository.update(userId, updateUserDto);
   }
 
@@ -59,16 +49,6 @@ export class UsersService {
   }
 
   async remove(userId : number) {
-    const user = await this.findid(userId);
-
-    if(!userId){
-      throw new Error("유저가 존재하지 않습니다.");
-    }
-
-    if(user.IsVaildated === false){
-      throw new Error("이메일 인증을 거쳐야 하는 회원입니다.");
-    }
-
     return await this.userRepository.delete(userId);
   }
 

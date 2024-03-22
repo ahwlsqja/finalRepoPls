@@ -3,7 +3,6 @@ import { Comments } from "src/cards/comments/entities/comment.entity";
 import { BaseModel } from "src/common/entities/basemodel.entitiy";
 
 import { Column, Entity, OneToMany } from "typeorm";
-import { Role } from "../types/userRole.type";
 
 @Entity({
   name: "users",
@@ -16,17 +15,17 @@ export class Users extends BaseModel {
   @Column('varchar',{ name: "password", nullable: false })
   password: string;
 
-  @Column({ type: 'enum', enum: Role, default: Role.User })
-  role: Role;
+  @Column('boolean', { name: "IsAdmin",  default: false })
+  IsAdmin: boolean;
 
-  @Column('varchar', { name: "emailtoken", nullable: true })
+  @Column('varchar', { name: "emailtoken", nullable: false })
   emailtoken: string;
 
   @Column('boolean', { name: "IsVaildated", default: false })
   IsVaildated: boolean;
 
-  @Column('varchar', { name: "sshKey", nullable : true })
-  sshKey: string;
+  @Column('boolean', { name: "sshKey", default: false })
+  sshKey: boolean;
 
   @OneToMany(() => Comments, (comment) => comment.user, {
     eager: true,
