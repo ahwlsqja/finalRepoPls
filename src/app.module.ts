@@ -81,6 +81,7 @@ import { AuthTokenGuard } from "./auth/guard/auth.guard";
     NotificationModule,
   ],
   providers: [
+
     // {
     //   provide: APP_GUARD,
     //   useClass: AuthTokenGuard,
@@ -89,6 +90,7 @@ import { AuthTokenGuard } from "./auth/guard/auth.guard";
     //   provide: APP_GUARD,
     //   useClass: RolesGuard,
     // }
+
   ],
 })
 export class AppModule { }
