@@ -1,7 +1,7 @@
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module } from "@nestjs/common";
-import { ENV_DB_DATABASE_KEY, ENV_DB_HOST_KEY, ENV_DB_PASSWORD_KEY, ENV_DB_PORT_KEY, ENV_DB_USERNAME_KEY } from "./common/const/env-keys.const";
+import { ENV_DB_DATABASE_KEY, ENV_DB_HOST_KEY, ENV_DB_PASSWORD_KEY, ENV_DB_PORT_KEY, ENV_DB_USERNAME_KEY, ENV_REDIS_HOST_KEY, ENV_REDIS_PORT } from "./common/const/env-keys.const";
 import { Board } from "./boards/entities/board.entity";
 import { Users } from "./users/entities/user.entity";
 import { CardWorkers } from "./cards/entities/cardworker.entity";
@@ -24,6 +24,9 @@ import { MailModule } from './mail/mail.module';
 import { APP_GUARD } from "@nestjs/core";
 import { AuthGuard } from "@nestjs/passport";
 import { RolesGuard } from "./auth/guard/roles.guard";
+import { BullModule } from "@nestjs/bull";
+import { NotificationModule } from './notification/notification.module';
+
 
 
 @Module({
@@ -58,6 +61,15 @@ import { RolesGuard } from "./auth/guard/roles.guard";
       isGlobal: true,
       useClass: CacheConfigService
     }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async () => ({
+        redis: {
+          host: process.env[ENV_REDIS_HOST_KEY],
+          port: parseInt(process.env[ENV_REDIS_PORT]),
+        }
+      })
+    }),
     AuthModule,
     BoardsModule,
     CardsModule,
@@ -65,6 +77,7 @@ import { RolesGuard } from "./auth/guard/roles.guard";
     CommonModule,
     UsersModule,
     MailModule,
+    NotificationModule,
   ],
   providers: [
     {

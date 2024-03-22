@@ -18,4 +18,8 @@ export const ENV_DB_DATABASE_KEY = "DB_DATABASE";
 
 export const ENV_EMAIL_ID_USER = 'GOOGLE_ID'
 
-export const ENV_EMAIL_USER_PASS = 'GOOGLE_PASS'
+export const ENV_EMAIL_USER_PASS = 'GOOGLE_PASS' 
+
+export const ENV_REDIS_HOST_KEY = 'REDIS_HOST'
+
+export const ENV_REDIS_PORT = "REDIS_PORT"

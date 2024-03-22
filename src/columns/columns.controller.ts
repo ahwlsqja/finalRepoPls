@@ -1,53 +1,75 @@
-// columns.controller.ts
-
-import { Controller, Get, Post, Body, Param, Patch, Delete, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, BadRequestException, UseGuards } from '@nestjs/common';
 import { ColumnsService } from './columns.service';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
 import { Columns } from './entities/column.entity';
+import { BoardMemberGuard } from 'src/auth/guard/boardmember.guard';
+import { BoardsService } from 'src/boards/boards.service';
 
-@Controller('columns')
+@Controller('/:boardId/columns')
 export class ColumnsController {
-  constructor(private readonly columnsService: ColumnsService) { }
+  constructor(
+    private readonly columnsService: ColumnsService,
+    private readonly boardsService: BoardsService,
+    ) { }
 
+  //칼럼 생성
+  @UseGuards(BoardMemberGuard)
   @Post()
-  async create(@Body() createColumnDto: CreateColumnDto) {
-    const { boardId, title, color } = createColumnDto;
+  async create(
+    @Param('boardId') boardId: number,
+    @Body() createColumnDto: CreateColumnDto,
+    ) {
+        const ColumnCount = await this.columnsService.count(boardId); // 전체 칼럼 갯수
+        return await this.columnsService.create(
+          boardId,
+          createColumnDto,
+          ColumnCount + 1, 
+        );    
+  }
 
-    if (!boardId) {
-      throw new BadRequestException('보드 ID가 필요합니다.');
-    }
+  // 특정 보드 모든 칼럼 조회
+  @UseGuards(BoardMemberGuard)
+  @Get('all/:boardId')
+  async findAll(@Param('boardId') boardId: number) {
+    return await this.columnsService.findAll(boardId);
+  }
 
-    const data = await this.columnsService.create(createColumnDto, boardId);
+  // 특정 보드 칼럼 한개 조회
+  @UseGuards(BoardMemberGuard)
+  @Get(':columnId')
+  async findOne(@Param('columnId') id: number) {
+    return await this.columnsService.findColumns(+id);
+  }
 
+  // 컬럼 업데이트
+  @UseGuards(BoardMemberGuard)
+  @Patch(':columnId')
+  async update(
+    @Param('columnId') id: number,
+    @Body() updateColumnDto: UpdateColumnDto
+    )
+    {
+    return await this.columnsService.update(+id, updateColumnDto);
+  }
+
+  // 컬럼 이동
+  @UseGuards(BoardMemberGuard)
+  @Patch(':columnId/:newOrder')
+  async swapColumnOrder(
+    @Param('columnId') id: number,
+    @Param('newOrder') newOrder: number,
+  ){
+    await this.columnsService.swapOrder(id, newOrder);
     return {
-      message: '컬럼 생성을 성공했습니다.',
-      data,
-    };
+      message: '칼럼 순서를 변경하였습니다.'
+    }
   }
 
-  @Get()
-  findAll(): Promise<Columns[]> {
-    return this.columnsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<Columns> {
-    return this.columnsService.findColumns(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateColumnDto: UpdateColumnDto): Promise<Columns> {
-    return this.columnsService.update(+id, updateColumnDto);
-  }
-
-  @Patch('order/:id')
-  changeOrder(@Param('id') id: string, @Body('orderByColumns') newOrder: number): Promise<void> {
-    return this.columnsService.changeOrder(+id, newOrder);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.columnsService.remove(+id);
+  // 칼럼 삭제
+  @UseGuards(BoardMemberGuard)
+  @Delete(':columnId')
+  async remove(@Param('columnId') id: number){
+    return await this.columnsService.remove(+id);
   }
 }

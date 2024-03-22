@@ -29,6 +29,12 @@ export class Board extends BaseModel {
   @IsString()
   description: string;
 
+  @Column('boolean', { name: "isDeleted", nullable: false, default: false})
+  isDeleted: boolean;
+
+  @Column('timestamp', { name: 'deletedAt', nullable: true})
+  deletedAt? : Date;
+
   @OneToMany(() => BoardMember, (boardmember) => boardmember.board)
   boardmember: BoardMember[];
 

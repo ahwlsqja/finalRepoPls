@@ -16,11 +16,13 @@ import {
 @Entity("columns")
 export class Columns extends BaseModel {
   @IsString()
-  @Column({ unsigned: true, nullable: true })
+  @Column('int',{ name: 'boardId' , nullable: true })
   boardId: number;
 
-  @Column()
+
+  @Column('varchar',{ name: 'title' , nullable: false})
   title: string;
+
 
   @Column("enum", {
     name: "color",
@@ -30,7 +32,8 @@ export class Columns extends BaseModel {
   })
   color: Color;
 
-  @Column({ type: "int", nullable: false, default: 1 })
+
+  @Column('int', { name: "orderByColumns", nullable: false, default: 1 })
   orderByColumns: number;
 
   @ManyToOne(() => Board, (board) => board.column, {

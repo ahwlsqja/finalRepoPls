@@ -9,5 +9,6 @@ import { BaseModel } from "./entities/basemodel.entitiy";
 
   controllers: [CommonController],
   providers: [CommonService],
+  exports: []
 })
 export class CommonModule {}
