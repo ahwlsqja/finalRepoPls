@@ -7,7 +7,7 @@ import { Cards } from "src/cards/entities/card.entity";
 @Entity({
   name: "checkList",
 })
-export class CheckList extends BaseModel {
+export class CheckLists extends BaseModel {
 
   @Column({ type: "varchar", nullable: false })
   title: string;
