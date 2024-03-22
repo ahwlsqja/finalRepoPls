@@ -1,8 +1,6 @@
 
 import { IsNotEmpty, IsNumber, IsString, MaxLength } from "class-validator";
 export class CreateCommentDto {
-  @IsNumber()
-  cardId: number;
 
   @IsString()
   @IsNotEmpty({ message: "댓글 내용을 입력해주세요." })

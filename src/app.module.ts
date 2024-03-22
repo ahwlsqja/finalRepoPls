@@ -26,6 +26,7 @@ import { BullModule } from "@nestjs/bull";
 import { NotificationModule } from './notification/notification.module';
 import { CheckLists } from "./cards/check_lists/entities/checkList.entity";
 import { AuthTokenGuard } from "./auth/guard/auth.guard";
+import { CommentsModule } from "./cards/comments/comments.module";
 
 
 
@@ -76,6 +77,7 @@ import { AuthTokenGuard } from "./auth/guard/auth.guard";
     CardsModule,
     ColumnsModule,
     CommonModule,
+    CommentsModule,
     UsersModule,
     MailModule,
     NotificationModule,

@@ -16,24 +16,30 @@ import { Users } from "src/users/entities/user.entity";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { User } from "src/common/decorator/user.decorator";
 import { AuthGuard } from "@nestjs/passport";
+import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
 
 @UseGuards(AuthGuard('jwt'))
 @ApiTags("Comments")
-@Controller("comments")
+@Controller("boards/:boardId/columns/:columnId/cards/:cardId/comments")
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) { }
 
+  @UseGuards(BoardMemberGuard)
   @ApiOperation({ summary: "카드 내 댓글 등록 API" })
-  @Post("/:cardId")
+  @Post()
   async createComment(
     @User() user: Users, 
+    @Param("boardId") boardId: number,
+    @Param("columnId") columnId: number,
     @Param("cardId") cardId: number,
     @Body() createCommentDto: CreateCommentDto,
   ) {
     const data = await this.commentsService.createComment(
-      user.id, // req.user의 id
-      cardId, // req.params의 cardId
-      createCommentDto.content, //dto의 content
+      user.id, 
+      boardId,
+      columnId,
+      cardId,
+      createCommentDto.content,
     );
 
     return {
@@ -66,7 +72,7 @@ export class CommentsController {
   @ApiOperation({ summary: "카드 내 댓글 수정 API " })
   @Patch("/:commentId")
   async updateComment(
-    @User() user: Users, // @커스텀데코레이터에서 user 정보 가져오기
+    @User() user: Users, 
     @Param("commentId") commentId: number,
     @Body() updateCommentDto: UpdateCommentDto,
   ) {

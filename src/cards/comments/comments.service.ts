@@ -24,6 +24,8 @@ export class CommentsService {
 
   async createComment(
     userId: number, 
+    boardId: number,
+    columnId: number,
     cardId: number, 
     content: string
     ) {
@@ -79,11 +81,13 @@ export class CommentsService {
     updateCommentDto: UpdateCommentDto,
   ) {
     try {
+      const { content } = updateCommentDto
       await this.verifyComment(userId, commentId);
-      return await this.commentsRepository.update(
-        { id: commentId },
-        updateCommentDto,
-      );
+      const updatedComment = await this.commentsRepository.save({
+        id: commentId,
+        content,
+    });
+      return updatedComment
     } catch (error) {
       throw new InternalServerErrorException(
         "댓글 수정 중 오류가 발생했습니다.",
