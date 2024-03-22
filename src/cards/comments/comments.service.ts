@@ -8,11 +8,9 @@ import { UpdateCommentDto } from "./dto/update-comment.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Comments } from "./entities/comment.entity";
 import { Repository } from "typeorm";
-
-@Injectable()
-export class CommentsService {
 import _ from "lodash";
 import { Cards } from "../entities/card.entity";
+import { SlackService } from "../../common/slackMessage.service";
 
 @Injectable()
 export class CommentsService {
@@ -21,16 +19,38 @@ export class CommentsService {
     private commentsRepository: Repository<Comments>,
     @InjectRepository(Cards)
     private cardsRepository: Repository<Cards>,
+    private readonly slackService: SlackService
   ) {}
 
-  async createComment(cardId: number, userId: number, content: string) {
+  async createComment(
+    userId: number, 
+    cardId: number, 
+    content: string
+    ) {
+
     try {
+      const card = await this.cardsRepository.findOne({
+        where: {
+            id: cardId
+        }
+      });
+      if (!card) {
+          throw new InternalServerErrorException("해당 카드를 찾을 수 없습니다.");
+      }
       const comment = this.commentsRepository.create({
-        cardId,
         userId,
+        cardId,
         content,
       });
       await this.commentsRepository.save(comment);
+
+       // 카드로 이동할 수 있는 URL 생성
+       const cardUrl = `https://localhost:3000/cards/${comment.cardId}`;
+
+       // 댓글 생성 메시지와 URL 링크를 Slack 메세지로 알림 보내기
+       const message = `${comment.cardId} 카드에 새로운 댓글이 등록되었습니다: ${cardUrl}\n${content}`;
+       await this.slackService.sendSlackMessage(message);
+
       return comment;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -39,7 +59,7 @@ export class CommentsService {
     }
   }
 
-  async getAllCommentsByCardId(cardId: number) {
+  async getCommentByCardId(cardId: number) {
     const comments = await this.cardsRepository.findOne({
       where: {
         id: cardId,

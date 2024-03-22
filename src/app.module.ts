@@ -6,10 +6,10 @@ import { Board } from "./boards/entities/board.entity";
 import { Users } from "./users/entities/user.entity";
 import { CardWorkers } from "./cards/entities/cardworker.entity";
 import { Cards } from "./cards/entities/card.entity";
-import { CheckList } from "./cards/check_lists/entities/check_list.entity";
+import { CheckList } from "./cards/check_lists/entities/checkList.entity";
 import { Columns } from "./columns/entities/column.entity";
 import { BaseModel } from "./common/entities/basemodel.entitiy";
-import { Check_current } from "./cards/check_lists/entities/Check_current.entity";
+import { CheckCurrent } from "./cards/check_lists/entities/checkCurrent.entity";
 import { Comments } from "./cards/comments/entities/comment.entity";
 import { AuthModule } from "./auth/auth.module";
 import { BoardsModule } from "./boards/boards.module";
@@ -50,7 +50,7 @@ import { NotificationModule } from './notification/notification.module';
         CheckList,
         Columns,
         BaseModel,
-        Check_current,
+        CheckCurrent,
         Comments,
         BoardMember,
       ],
@@ -80,14 +80,14 @@ import { NotificationModule } from './notification/notification.module';
     NotificationModule,
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard('jwt')
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard('jwt')
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
   ],
 })
 export class AppModule { }

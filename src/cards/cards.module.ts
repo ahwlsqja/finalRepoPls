@@ -1,8 +1,6 @@
 import { Module } from "@nestjs/common";
 import { CardsService } from "./cards.service";
 import { CardsController } from "./cards.controller";
-import { CommentsModule } from "./comments/comments.module";
-import { CheckListsModule } from "./check_lists/check_lists.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Cards } from "./entities/card.entity";
 import { CardWorkers } from "./entities/cardworker.entity";

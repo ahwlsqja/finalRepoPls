@@ -5,8 +5,11 @@ import { UpdateColumnDto } from './dto/update-column.dto';
 import { Columns } from './entities/column.entity';
 import { BoardMemberGuard } from 'src/auth/guard/boardmember.guard';
 import { BoardsService } from 'src/boards/boards.service';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('/:boardId/columns')
+
 export class ColumnsController {
   constructor(
     private readonly columnsService: ColumnsService,

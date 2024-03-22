@@ -7,33 +7,32 @@ import {
   Param,
   Delete,
   HttpStatus,
+  UseGuards,
 } from "@nestjs/common";
 import { CommentsService } from "./comments.service";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
-import { AuthGuard } from "@nestjs/passport";
-
-@UseGuards(AuthGuard('jwt'))
 import { Users } from "src/users/entities/user.entity";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { User } from "src/common/decorator/user.decorator";
+import { AuthGuard } from "@nestjs/passport";
 
+@UseGuards(AuthGuard('jwt'))
 @ApiTags("Comments")
 @Controller("comments")
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) { }
 
-}
   @ApiOperation({ summary: "카드 내 댓글 등록 API" })
   @Post("/:cardId")
   async createComment(
-    @User() user: Users, // @커스텀데코레이터에서 user 정보 가져오기
+    @User() user: Users, 
     @Param("cardId") cardId: number,
     @Body() createCommentDto: CreateCommentDto,
   ) {
     const data = await this.commentsService.createComment(
-      cardId, // req.params의 cardId
       user.id, // req.user의 id
+      cardId, // req.params의 cardId
       createCommentDto.content, //dto의 content
     );
 
@@ -49,13 +48,17 @@ export class CommentsController {
    * - /cards에서 Card 조회하면, Comments 목록이 나오도록하면,
    * - 각 도메인에서 getAll-, get-ById API 갯수를 줄일 수 있을듯.
    */
-  @ApiOperation({ summary: "카드 내 댓글 목록 조회 API " })
+  @ApiOperation({ summary: "카드 내 댓글 상세 조회 API " })
   @Get("/:cardId")
-  async getAllCommentsByCardId(@Param("cardId") cardId: number) {
-    const data = await this.commentsService.getAllCommentsByCardId(cardId);
+
+  async getCommentByCardId(
+    @Param("cardId") cardId: number
+    ) {
+
+    const data = await this.commentsService.getCommentByCardId(cardId);
     return {
       statusCode: HttpStatus.OK,
-      message: "댓글 목록 조회에 성공하였습니다.",
+      message: "댓글 상세 조회에 성공하였습니다.",
       data,
     };
   }

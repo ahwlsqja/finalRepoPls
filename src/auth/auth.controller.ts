@@ -8,7 +8,7 @@ import { LoginDto } from 'src/users/dto/login.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post("sing-up")
+  @Post("sign-up")
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.authService.create(createUserDto);
   }

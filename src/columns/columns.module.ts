@@ -4,9 +4,10 @@ import { ColumnsController } from "./columns.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Columns } from "./entities/column.entity";
 import { BoardsModule } from "src/boards/boards.module";
+import { NotificationModule } from "src/notification/notification.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Columns]), BoardsModule],
+  imports: [TypeOrmModule.forFeature([Columns]), BoardsModule, NotificationModule],
   controllers: [ColumnsController],
   providers: [ColumnsService],
 })

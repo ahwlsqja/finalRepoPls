@@ -61,7 +61,7 @@ export class CardsService {
         throw new NotFoundException('컬럼이 존재하지 않습니다.')
     }
 
-    task.userId=userId;
+    //task.userId=userId;
 
     return await this.cardsRepository.save(task);
   }
@@ -74,7 +74,7 @@ export class CardsService {
         throw new NotFoundException('컬럼이 존재하지 않습니다.')
     }
 
-    changetask.userId=userId;
+    //changetask.userId=userId;
     return await this.cardsRepository.save(changetask);
   }
 
