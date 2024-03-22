@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Param, Patch, Delete, BadRequestException,
 import { ColumnsService } from './columns.service';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
-import { Columns } from './entities/column.entity';
 import { BoardMemberGuard } from 'src/auth/guard/boardmember.guard';
 import { BoardsService } from 'src/boards/boards.service';
 import { AuthGuard } from '@nestjs/passport';

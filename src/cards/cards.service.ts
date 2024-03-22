@@ -1,19 +1,21 @@
 
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { UpdateCardDto } from "./dto/update-card.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Cards } from "./entities/card.entity";
 import { Repository } from "typeorm";
 import { BaseModel } from "src/common/entities/basemodel.entitiy";
 import _ from "lodash";
-import { number } from "joi";
+import { CreateCardDto } from "./dto/create-card.dto";
+import { CardWorkers } from "./entities/cardworker.entity";
 
 @Injectable()
 export class CardsService {
   constructor(
     @InjectRepository(Cards)
-    private cardsRepository: Repository<Cards>
-  ) { }
+    private cardsRepository: Repository<Cards>,
+    @InjectRepository(CardWorkers)
+    private readonly cardWorkersRepository: Repository<CardWorkers>,
+  ) {}
 
   // 카드 상세 조회 #경복님이랑 +
   async getCardsByColumnId(columnId: number) {
@@ -22,12 +24,41 @@ export class CardsService {
   });
   }
 
-  // 카드 생성
-  async createCard(id: number, content: string) {
-    await this.cardsRepository.save({
-        id:id,
-        content:content,
+  async createCard(
+    boardId: number, 
+    columnId: number, 
+    userId: number, 
+    createCardDto: CreateCardDto
+    ) {
+    // 해당 칼럼의 마지막 orderByCards 값을 가져옴
+    const lastCard = await this.cardsRepository.findOne({
+      where: { columnId },
+      order: { orderByCards: 'DESC' }, // 내림차순으로 정렬하여 가장 큰 값을 가져옴
     });
+
+    // 새로운 카드 생성 시 마지막 orderByCards 값에 1을 더함
+    const orderByCards = lastCard ? lastCard.orderByCards += 1 : 1
+
+    const { title, color, content, endDate } = createCardDto;
+    const card = this.cardsRepository.create({
+      columnId,
+      title,
+      color,
+      content,
+      endDate,
+      tag: userId,
+      orderByCards,
+    });
+    await this.cardsRepository.save(card);
+
+    // 카드 담당자 지정
+    const cardWorker = this.cardWorkersRepository.create({
+      cards: card,
+      boardmemberId: userId,
+    });
+    await this.cardWorkersRepository.save(cardWorker);
+
+    return card;
   }
 
    // 카드 수정  

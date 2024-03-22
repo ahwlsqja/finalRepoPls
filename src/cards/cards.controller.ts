@@ -17,6 +17,7 @@ import { Users } from "src/users/entities/user.entity";
 import { AssignDto } from "./dto/assign-card.dto";
 import { ChangeDto } from "./dto/change-card.dto";
 import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
+import { User } from "src/common/decorator/user.decorator";
 
 @UseGuards(AuthGuard('jwt'))
 @Controller("/:boardId/:columnId/cards")
@@ -40,15 +41,18 @@ export class CardsController {
   async createCard(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
-    @Body() CreateCardDto: CreateCardDto,
+    @User() user: Users,
+    @Body() createCardDto: CreateCardDto,
   ) {
     const data = await this.cardsService.createCard(
-      Users.id,
-      CreateCardDto.content,
+      boardId,
+      columnId,
+      user.id,
+      createCardDto
     );
     
     return{
-      statusCode: HttpStatus.OK,  //200
+      statusCode: HttpStatus.CREATED,
       message: "카드 생성에 성공하였습니다.",
       data,
     }

@@ -9,10 +9,12 @@ import { CheckCurrent } from "./check_lists/entities/checkCurrent.entity";
 import { CheckLists } from "./check_lists/entities/checkList.entity";
 import { NotificationModule } from "src/notification/notification.module";
 import { BoardsModule } from "src/boards/boards.module";
+import { Board } from "src/boards/entities/board.entity";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      Board,
       Cards,
       CardWorkers,
       CheckLists,
