@@ -7,16 +7,17 @@ import { CardWorkers } from "./entities/cardworker.entity";
 import { Comments } from "./comments/entities/comment.entity";
 import { CheckCurrent } from "./check_lists/entities/checkCurrent.entity";
 import { CheckLists } from "./check_lists/entities/checkList.entity";
-
+import { NotificationModule } from "src/notification/notification.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Cards,
       CardWorkers,
-      CheckCurrent,
       CheckLists,
+      CheckCurrent,
       Comments,
+      NotificationModule
     ]),
   ],
   controllers: [CardsController],
