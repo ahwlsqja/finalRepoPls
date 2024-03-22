@@ -51,5 +51,4 @@ export class UsersController {
   async remove(@User() user : Users) {
     return await this.usersService.remove(user.id);
   }
-
 }

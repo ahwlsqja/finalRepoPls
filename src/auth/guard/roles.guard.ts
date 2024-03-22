@@ -1,8 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable, SetMetadata } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-
+import { IS_PUBLIC_KEY } from 'src/common/decorator/is-public.decorator';
 import { Role } from 'src/users/types/userRole.type';
+
 
 
 @Injectable()
@@ -13,8 +14,22 @@ export class RolesGuard extends AuthGuard('jwt') implements CanActivate {
   
 
   async canActivate(context: ExecutionContext) {
-    // if(!IsPublic){
-    // }
+    const isPublic = this.reflector.getAllAndOverride<boolean>(
+      IS_PUBLIC_KEY,
+      [
+        context.getHandler(),
+        context.getClass()
+      ]
+    );
+
+    const req = context.switchToHttp().getRequest();
+
+    if(isPublic){
+      req.isRoutePublic = true;
+
+      return true;
+    }
+
     const authenticated = await super.canActivate(context);
     if (!authenticated) {
       return false;
@@ -24,6 +39,7 @@ export class RolesGuard extends AuthGuard('jwt') implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
+    
     if (!requiredRoles) {
       return true;
     }

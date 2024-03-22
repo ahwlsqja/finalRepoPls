@@ -23,7 +23,6 @@ import { CacheConfigService } from "./cache/cacheConfig.service";
 import { MailModule } from './mail/mail.module';
 import { APP_GUARD } from "@nestjs/core";
 import { RolesGuard } from "./auth/guard/roles.guard";
-import { Guard } from "./auth/guard/guard";
 
 
 @Module({
@@ -67,10 +66,6 @@ import { Guard } from "./auth/guard/guard";
     MailModule,
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: Guard
-    },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
