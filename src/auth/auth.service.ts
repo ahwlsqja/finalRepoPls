@@ -95,10 +95,6 @@ export class AuthService {
         if (!(await compare(password, user.password))) {
           throw new Error('비밀번호를 확인해주세요.');
         }
-
-        if(!user.IsVaildated){
-          throw new Error("이메일 인증을 거쳐야 하는 회원입니다.");
-        }
     
         const payload = { email, sub: user.id };
         return {
