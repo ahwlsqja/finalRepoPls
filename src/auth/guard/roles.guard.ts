@@ -1,7 +1,10 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
+import { IS_PUBLIC_KEY } from 'src/common/decorator/is-public.decorator';
 import { Role } from 'src/users/types/userRole.type';
+
+
 
 @Injectable()
 export class RolesGuard extends AuthGuard('jwt') implements CanActivate {
@@ -9,7 +12,7 @@ export class RolesGuard extends AuthGuard('jwt') implements CanActivate {
     super();
   }
 
-  async canActivate(context: ExecutionContext) {
+    async canActivate(context: ExecutionContext) {
     const authenticated = await super.canActivate(context);
     if (!authenticated) {
       return false;
@@ -19,6 +22,7 @@ export class RolesGuard extends AuthGuard('jwt') implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
+    
     if (!requiredRoles) {
       return true;
     }
