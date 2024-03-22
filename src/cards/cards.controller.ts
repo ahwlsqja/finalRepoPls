@@ -17,21 +17,26 @@ import { Users } from "src/users/entities/user.entity";
 import { AssignDto } from "./dto/assign-card.dto";
 import { ChangeDto } from "./dto/change-card.dto";
 
-@UseGuards(AuthGuard('jwt'))
-@Controller("cards")
+@Controller("/:boardId/:columnId/cards")
 export class CardsController {
   constructor(private readonly cardsService: CardsService) {}
 
   
   // 카드 상세 조회
-  @Get(":columnId/:id")
-  async findCard(@Param("id") id: number) {
+  @Get(":cardId")
+  async findCard(
+    @Param("boardId") boardId: number,
+    @Param("columnId") columnId: number,
+    @Param("cardId") id: number,
+
+    ) {
     return this.cardsService.getCardsByColumnId(id);
   }
 
   // 카드 생성
-  @Post(':columnId')
+  @Post()
   async createCard(
+    @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
     @Body() CreateCardDto: CreateCardDto,
   ) {
@@ -48,9 +53,11 @@ export class CardsController {
   }
 
   // 카드 수정 / 담당자 변경
-  @Patch(":columnId/:id")
+  @Patch("worker/:cardId")
   async updateCard(
-    @Param('id') id: number,
+    @Param("boardId") boardId: number,
+    @Param('columnId') columnId: number,
+    @Param('cardId') id: number,
     @Body() UpdateCardDto: UpdateCardDto,
   ) {
     const data = await this.cardsService.updateCard(
@@ -67,9 +74,11 @@ export class CardsController {
   }
 
   // 카드 삭제
-  @Delete(":columnId/:id")
+  @Delete(":cardId")
   async deleteCard( 
-    @Param('id') id: number) {
+    @Param("boardId") boardId: number,
+    @Param('columnId') columnId: number,
+    @Param('cardId') id: number) {
     await this.cardsService.deleteCard(id, Users.id);
 
     return{
@@ -79,9 +88,11 @@ export class CardsController {
   }
 
   // 작업자 할당
-  @Patch(":columnId/:id")
+  @Patch("allocate/:cardId")
   async assignWorker(
-    @Param('id') id:number,
+    @Param("boardId") boardId: number,
+    @Param('columnId') columnId: number,
+    @Param('cardId') id:number,
     @Body () AssignDto : AssignDto,
   ){
     const data = await this.cardsService.assignWorker(
@@ -97,9 +108,11 @@ export class CardsController {
   }
 
   // 작업자 변경
-  @Patch(":columnId/:id")
+  @Patch("changeworker/:cardId")
   async changeWorker(
-    @Param('id') id:number,
+    @Param("boardId") boardId: number,
+    @Param('columnId') columnId: number,
+    @Param('cardId') id:number,
     @Body () changeDto : ChangeDto,
   ){
     const data = await this.cardsService.changeWorker(
@@ -116,9 +129,9 @@ export class CardsController {
 
 
   // 칼럼 내 위치 변경
-  @Patch(':id/:newOrderByCards')
+  @Patch(':cardId/:newOrderByCards')
   async changeCardPosition(
-    @Param('id') id: number,
+    @Param('cardId') id: number,
     @Param('newOrderByCards') newOrderByCards: number,
   ) {
       const data = await this.cardsService.changeOrderByCard(id, newOrderByCards);
