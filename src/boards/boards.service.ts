@@ -35,12 +35,13 @@ export class BoardsService {
       await queryRunner.connect();
       await queryRunner.startTransaction('READ COMMITTED'); 
       try{
+        console.log('호스트', userId)
       // 보드 생성
       const createdBoard = queryRunner.manager.create(Board, createBoardDto)  
       
       // 보드 저장
       const savedBoard = await queryRunner.manager.save(Board, createdBoard)
-
+      console.log('호스트--------12', userId)
       // 보드 생성한 사용자 권한 부여하기
       const HostUser = queryRunner.manager.create(
         BoardMember,
@@ -49,18 +50,18 @@ export class BoardsService {
         board: { id: savedBoard.id },
         isCreateUser: true
       });
-
+      console.log('호스트--------34', userId)
       // Host 유저 저장
       await queryRunner.manager.save(BoardMember, HostUser);
-
+      console.log('호스트--------56', userId)
       // 푸시 알림 보내기
-      await this.notificationsService.sendNotification({
-        type: 'boardCreated',
-        message: `보드가 생성되었습니다: ${savedBoard.title}.`,
-      })
-
+      // await this.notificationsService.sendNotification({
+      //   type: 'boardCreated',
+      //   message: `보드가 생성되었습니다: ${savedBoard.title}.`,
+      // })
+      
       await queryRunner.commitTransaction(); // 트랜잭션 종료
-
+      
       return { status: 201, message: '보드 생성 성공'};
       
 
@@ -136,10 +137,10 @@ async updateBoard(userId: number,
       await queryRunner.manager.save(Board, board);
 
       // 푸시 알림 보내기
-      await this.notificationsService.sendNotification({
-        type: 'boardUpdate',
-        message: `보드가 생성되었습니다: ${board.title}.`,
-      })
+      // await this.notificationsService.sendNotification({
+      //   type: 'boardUpdate',
+      //   message: `보드가 생성되었습니다: ${board.title}.`,
+      // })
 
       await queryRunner.commitTransaction(); // 트랜잭션 종료
       return { status: 201, message: '보드 수정 성공'};
@@ -190,10 +191,10 @@ async updateBoard(userId: number,
       await this.cacheManager.set(deleteCacheKey, deletedBoardInfo, 60*60*24*30)
 
       // 5. 푸시 알림 보내기
-      await this.notificationsService.sendNotification({
-        type: 'boardDelete',
-        message: `보드가 삭제되었습니다`,
-      })
+      // await this.notificationsService.sendNotification({
+      //   type: 'boardDelete',
+      //   message: `보드가 삭제되었습니다`,
+      // })
 
       // 6. 트랜잭션 완료 및 종료
       await queryRunner.commitTransaction(); // 트랜잭션 종료

@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm";
-import { CheckList } from "./entities/checkList.entity";
+import { CheckLists } from "./entities/checkList.entity";
 import { Repository } from "typeorm";
 import { Cards } from "../entities/card.entity";
 import { CheckCurrent } from "./entities/checkCurrent.entity";
@@ -12,8 +12,8 @@ import { UpdateCheckListDto } from "./dto/update-checkList.dto";
 @Injectable()
 export class CheckListsService {
     constructor(
-        @InjectRepository(CheckList)
-        private checkListsRepository: Repository<CheckList>,
+        @InjectRepository(CheckLists)
+        private checkListsRepository: Repository<CheckLists>,
         @InjectRepository(Cards)
         private cardsRepository: Repository<Cards>,
         @InjectRepository(CheckCurrent)

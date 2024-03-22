@@ -16,44 +16,59 @@ import { AuthGuard } from "@nestjs/passport";
 import { Users } from "src/users/entities/user.entity";    
 import { AssignDto } from "./dto/assign-card.dto";
 import { ChangeDto } from "./dto/change-card.dto";
+import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
+import { User } from "src/common/decorator/user.decorator";
 
+
+@UseGuards(AuthGuard('jwt'))
 @Controller("/:boardId/:columnId/cards")
-export class CardsController {
-  constructor(private readonly cardsService: CardsService) {}
 
+export class CardsController {
+  constructor(
+    private readonly cardsService: CardsService
+    ) {}
+  
   
   // 카드 상세 조회
+
+  @UseGuards(BoardMemberGuard)
   @Get(":cardId")
   async findCard(
     @Param("boardId") boardId: number,
     @Param("columnId") columnId: number,
     @Param("cardId") id: number,
-
     ) {
     return this.cardsService.getCardsByColumnId(id);
   }
 
   // 카드 생성
+
+  @UseGuards(BoardMemberGuard)
   @Post()
   async createCard(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
-    @Body() CreateCardDto: CreateCardDto,
+    @User() user: Users,
+    @Body() createCardDto: CreateCardDto,
   ) {
     const data = await this.cardsService.createCard(
-      Users.id,
-      CreateCardDto.content,
+      boardId,
+      columnId,
+      user.id,
+      createCardDto
     );
     
     return{
-      statusCode: HttpStatus.OK,  //200
+      statusCode: HttpStatus.CREATED,
       message: "카드 생성에 성공하였습니다.",
       data,
     }
   }
 
   // 카드 수정 / 담당자 변경
-  @Patch("worker/:cardId")
+
+  @UseGuards(BoardMemberGuard)
+  @Patch(":columnId/:id")
   async updateCard(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
@@ -74,7 +89,9 @@ export class CardsController {
   }
 
   // 카드 삭제
-  @Delete(":cardId")
+
+  @UseGuards(BoardMemberGuard)
+  @Delete(":columnId/:id")
   async deleteCard( 
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
@@ -88,7 +105,8 @@ export class CardsController {
   }
 
   // 작업자 할당
-  @Patch("allocate/:cardId")
+  @UseGuards(BoardMemberGuard)
+  @Patch(":columnId/:id")
   async assignWorker(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
@@ -108,7 +126,9 @@ export class CardsController {
   }
 
   // 작업자 변경
-  @Patch("changeworker/:cardId")
+
+  @UseGuards(BoardMemberGuard)
+  @Patch(":columnId/:id")
   async changeWorker(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
@@ -129,7 +149,9 @@ export class CardsController {
 
 
   // 칼럼 내 위치 변경
-  @Patch(':cardId/:newOrderByCards')
+
+  @UseGuards(BoardMemberGuard)
+  @Patch(':id/:newOrderByCards')
   async changeCardPosition(
     @Param('cardId') id: number,
     @Param('newOrderByCards') newOrderByCards: number,
@@ -144,7 +166,4 @@ export class CardsController {
   }
 }
 
-function UserInfo(): (target: CardsController, propertyKey: "createCard", parameterIndex: 0) => void {
-  throw new Error("Function not implemented.");
-}
 

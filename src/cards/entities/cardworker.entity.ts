@@ -1,4 +1,4 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Cards } from "./card.entity";
 import { BoardMember } from "src/boards/entities/boardmember.entity";
 
@@ -9,15 +9,18 @@ export class CardWorkers {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Cards, (cards) => cards.cardworker, {
+  @ManyToOne(() => Cards, (card) => card.cardworkers, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "cardId", referencedColumnName: "id" })
-  cards: Cards;
+  cards: Cards | null;
 
   @ManyToOne(() => BoardMember, (boardmember) => boardmember.cardworker, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "boardmemberId", referencedColumnName: "id" })
-  boardmember: BoardMember;
+  boardmember: BoardMember | null;
+
+  @Column({ type: "bigint", nullable: true })
+  boardmemberId: number;
 }

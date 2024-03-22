@@ -48,6 +48,7 @@ import { AuthTokenGuard } from "./auth/guard/auth.guard";
         CardWorkers,
         Cards,
         CheckLists,
+        CheckLists,
         Columns,
         BaseModel,
         CheckCurrent,
@@ -80,14 +81,16 @@ import { AuthTokenGuard } from "./auth/guard/auth.guard";
     NotificationModule,
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthTokenGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    }
+
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthTokenGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // }
+
   ],
 })
 export class AppModule { }
