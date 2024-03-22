@@ -6,12 +6,15 @@ import {
   Param,
   Delete,
   HttpStatus,
+  UseGuards,
 } from "@nestjs/common"
 import { CheckListsService } from "./checkLists.service";
 import { UpdateCheckListDto } from "./dto/update-checkList.dto";
 import { ApiOperation } from "@nestjs/swagger";
 import { CreateCheckListDto } from "./dto/create-checkList.dto copy";
+import { AuthGuard } from "@nestjs/passport";
 
+@UseGuards(AuthGuard('jwt'))
 @Controller("checkLists")
 export class CheckListsController {
   constructor(
@@ -65,6 +68,7 @@ export class CheckListsController {
     };
   }
 
+  
   /**다음 할 일
    * 1. createCheckCurrent - 할일 생성 API
    * 2. updateCheckCurrent - 할일 수정 API
@@ -72,4 +76,9 @@ export class CheckListsController {
    * 
    * 카드-체크리스트-댓글 조회
    */
+
+  // ===============================================
+  //            CheckCurrent 관련 API
+  // ===============================================
+
 }

@@ -18,7 +18,9 @@ import { AuthenticateDto } from "./dto/authenticateEmailDto";
 import { BoardMemberGuard } from "./guard/boardmember.guard";
 import { BoardHostGuard } from "./guard/boardhost.guard";
 import { Board } from "./entities/board.entity";
+import { AuthGuard } from "@nestjs/passport";
 
+@UseGuards(AuthGuard('jwt'))
 @Controller("boards")
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
@@ -47,7 +49,7 @@ export class BoardsController {
   })
   @ApiBearerAuth()
   @UseGuards(BoardMemberGuard)
-  @Get()
+  @Get(':id')
   @ApiResponse({ type: Board })
   async getBoardByBoardId(
     @Param('id') id: number)

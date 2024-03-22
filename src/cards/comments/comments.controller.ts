@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   HttpStatus,
+  UseGuards,
 } from "@nestjs/common";
 import { CommentsService } from "./comments.service";
 import { CreateCommentDto } from "./dto/create-comment.dto";
@@ -14,7 +15,9 @@ import { UpdateCommentDto } from "./dto/update-comment.dto";
 import { Users } from "src/users/entities/user.entity";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { User } from "src/common/decorator/user.decorator";
+import { AuthGuard } from "@nestjs/passport";
 
+@UseGuards(AuthGuard('jwt'))
 @ApiTags("Comments")
 @Controller("comments")
 export class CommentsController {

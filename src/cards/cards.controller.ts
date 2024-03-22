@@ -16,6 +16,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { Users } from "src/users/entities/user.entity";    
 import { AssignDto } from "./dto/assign-card.dto";
 import { ChangeDto } from "./dto/change-card.dto";
+
 @UseGuards(AuthGuard('jwt'))
 @Controller("cards")
 export class CardsController {
