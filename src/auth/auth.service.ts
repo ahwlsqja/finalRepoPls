@@ -7,7 +7,7 @@ import { MailService } from 'src/mail/mail.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { Users } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { ENV_sshKey_KEY } from '../auth/const/env.keys.const';
+import { Role } from 'src/users/types/userRole.type';
 
 
 @Injectable()
@@ -40,11 +40,15 @@ export class AuthService {
             password : hashpassword,
             name,
             sshKey : hashsshkey,
-            IsAdmin : true
+            role : Role.Admin
           });
           
           await this.usersRepository.save(aduser);
 
+          delete aduser.password;
+          delete aduser.sshKey;
+          delete aduser.emailtoken;
+          delete aduser.IsVaildated;
           return aduser;
         } else if (!sshKey) {
           const randomNum = () => {
@@ -60,13 +64,16 @@ export class AuthService {
           });
   
           await this.usersRepository.save(users);
+          delete users.password;
+          delete users.emailtoken;
+          delete users.sshKey;
           await this.sendemail(email, token);
           return users;
         }
       }
 
       async sshkey (sshKey : string){
-        const ssykeys = this.configService.get<string>(ENV_sshKey_KEY);
+        const ssykeys = this.configService.get<string>('ssKeys');
 
         if(sshKey !== ssykeys){
           throw new Error("키가 일치하지 않습니다.");
@@ -89,10 +96,9 @@ export class AuthService {
           throw new Error('비밀번호를 확인해주세요.');
         }
 
-        // 가드를 거쳐야 하는 회원
-        // if(!user.IsVaildated){
-        //   throw new Error("이메일 인증을 거쳐야 하는 회원입니다.");
-        // }
+        if(!user.IsVaildated){
+          throw new Error("이메일 인증을 거쳐야 하는 회원입니다.");
+        }
     
         const payload = { email, sub: user.id };
         return {
@@ -108,19 +114,4 @@ export class AuthService {
       async sendemail( email : string, emailtoken : string ){
         await this.mailservice.sendemailtoken(email, emailtoken);
       }
-
-
-    //   async OAuthLogin({ @User() user : Users}) {
-    //     // 1. 회원조회
-    //     let user = await this.authrepository.findOne({ email: user.email }); //user를 찾아서
-    
-    //     // 2, 회원가입이 안되어있다면? 자동회원가입
-    //     if (!user) user = await this.authrepository.create({ user }); //user가 없으면 하나 만들고, 있으면 이 if문에 들어오지 않을거기때문에 이러나 저러나 user는 존재하는게 됨.
-    
-    //     // 3. 회원가입이 되어있다면? 로그인(AT, RT를 생성해서 브라우저에 전송)한다
-    //     await this.setRefreshToken({ user, res });
-    //     res.redirect("리다이렉트할 url주소");
-    //   }
-    // }
-      
 }

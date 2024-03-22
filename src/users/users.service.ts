@@ -11,7 +11,7 @@ export class UsersService {
   
 
   async findAll() {
-    return await this.userRepository.find({ select : ['id', 'email', 'password', 'name', 'IsAdmin', 'IsVaildated', 'sshKey', 'createdAt', 'updatedAt'] });
+    return await this.userRepository.find();
   }
 
   async findOne(id: number) {
