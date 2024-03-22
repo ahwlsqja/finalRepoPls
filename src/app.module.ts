@@ -6,7 +6,6 @@ import { Board } from "./boards/entities/board.entity";
 import { Users } from "./users/entities/user.entity";
 import { CardWorkers } from "./cards/entities/cardworker.entity";
 import { Cards } from "./cards/entities/card.entity";
-import { CheckLists } from "./cards/check_lists/entities/checkList.entity";
 import { Columns } from "./columns/entities/column.entity";
 import { BaseModel } from "./common/entities/basemodel.entitiy";
 import { CheckCurrent } from "./cards/check_lists/entities/checkCurrent.entity";
@@ -26,6 +25,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { RolesGuard } from "./auth/guard/roles.guard";
 import { BullModule } from "@nestjs/bull";
 import { NotificationModule } from './notification/notification.module';
+import { CheckLists } from "./cards/check_lists/entities/checkList.entity";
 
 
 
@@ -47,6 +47,7 @@ import { NotificationModule } from './notification/notification.module';
         Users,
         CardWorkers,
         Cards,
+        CheckLists,
         CheckLists,
         Columns,
         BaseModel,
