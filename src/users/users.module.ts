@@ -1,4 +1,3 @@
-
 import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
 import { Module } from "@nestjs/common";
@@ -20,4 +19,4 @@ import { ConfigService } from "@nestjs/config";
   controllers: [UsersController],
   exports : [UsersService]
 })
-export class UsersModule {}
+export class UsersModule { }

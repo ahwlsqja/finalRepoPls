@@ -3,21 +3,21 @@ import { Cards } from "./card.entity";
 import { BoardMember } from "src/boards/entities/boardmember.entity";
 
 @Entity({
-    name: 'cardworkers'
+  name: "cardworkers",
 })
-export class CardWorker {
-    @PrimaryGeneratedColumn()
-    id: number;
+export class CardWorkers {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @ManyToOne(() => Cards, (cards) => cards.cardworker, {
-        onDelete: "CASCADE",
-      })
-    @JoinColumn({ name: "cardId", referencedColumnName: "id" })
-    cards: Cards;
+  @ManyToOne(() => Cards, (cards) => cards.cardworker, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "cardId", referencedColumnName: "id" })
+  cards: Cards;
 
-    @ManyToOne(() => BoardMember, (boardmember) => boardmember.cardworker, {
-        onDelete: "CASCADE",
-      })
-    @JoinColumn({ name: "boardmemberId", referencedColumnName: "id" })
-    boardmember: BoardMember;
+  @ManyToOne(() => BoardMember, (boardmember) => boardmember.cardworker, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "boardmemberId", referencedColumnName: "id" })
+  boardmember: BoardMember;
 }

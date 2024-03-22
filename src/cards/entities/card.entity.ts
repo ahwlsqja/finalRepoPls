@@ -1,21 +1,26 @@
-
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Color } from "src/common/types/color.type";
-import { CardWorker } from "./cardworker.entity";
+import { CardWorkers } from "./cardworker.entity";
 import { Comments } from "../comments/entities/comment.entity";
 import { BaseModel } from "src/common/entities/basemodel.entitiy";
 import { Columns } from "src/columns/entities/column.entity";
 import { CheckList } from "../check_lists/entities/checkList.entity";
 
-
 @Entity({
-    name: 'cards',
-  })
+  name: "cards",
+})
   export class Cards extends BaseModel{
   
     @Column({ type: 'bigint', unique: true, nullable: false })
     columnId: number;
-  
+
     @Column({ type: 'varchar', nullable: false })
     title: string;
   
@@ -44,23 +49,21 @@ import { CheckList } from "../check_lists/entities/checkList.entity";
       })
       comments: Comments[];
 
-    @OneToMany(() => CardWorker, (cardworker) => cardworker.cards, {
+    @OneToMany(() => CardWorkers, (cardworker) => cardworker.cards, {
       eager: true,
     })
-    cardworker: CardWorker[];
+    cardworker: CardWorkers[];
 
     @OneToMany(() => CheckList, (checkList) => checkList.card, {
       eager: true,
     })
     checkLists: CheckList[];
 
-    @ManyToOne(() => Columns, (column) => column.cards, {
-      nullable: false,
-      onDelete: 'CASCADE',
-    })
-    @JoinColumn({ name: 'columnId', referencedColumnName: 'id'})
-    column: Columns
-    userId: number;
+  @ManyToOne(() => Columns, (column) => column.cards, {
+    nullable: false,
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "columnId", referencedColumnName: "id" })
+  column: Columns;
+
   }
-
-

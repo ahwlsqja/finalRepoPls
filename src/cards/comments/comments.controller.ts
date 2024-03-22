@@ -21,12 +21,12 @@ import { AuthGuard } from "@nestjs/passport";
 @ApiTags("Comments")
 @Controller("comments")
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(private readonly commentsService: CommentsService) { }
 
   @ApiOperation({ summary: "카드 내 댓글 등록 API" })
   @Post("/:cardId")
   async createComment(
-    @User() user: Users, // @커스텀데코레이터에서 user 정보 가져오기
+    @User() user: Users, 
     @Param("cardId") cardId: number,
     @Body() createCommentDto: CreateCommentDto,
   ) {

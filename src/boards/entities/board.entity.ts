@@ -1,3 +1,5 @@
+// cmhproject\src\boards\entities\board.entity.ts
+
 import { IsEnum, IsNotEmpty, IsString } from "class-validator";
 import { BaseModel } from "src/common/entities/basemodel.entitiy";
 import { Color } from "src/common/types/color.type";
@@ -27,7 +29,12 @@ export class Board extends BaseModel {
   @IsString()
   description: string;
 
-  
+  @Column('boolean', { name: "isDeleted", nullable: false, default: false})
+  isDeleted: boolean;
+
+  @Column('timestamp', { name: 'deletedAt', nullable: true})
+  deletedAt? : Date;
+
   @OneToMany(() => BoardMember, (boardmember) => boardmember.board)
   boardmember: BoardMember[];
 

@@ -1,15 +1,23 @@
-import { Module } from "@nestjs/common"
+import { Module } from "@nestjs/common";
 import { CardsService } from "./cards.service";
 import { CardsController } from "./cards.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Cards } from "./entities/card.entity";
-import { CardWorker } from "./entities/cardworker.entity";
-import { CheckList } from "./check_lists/entities/checkList.entity";
-import { CheckCurrent } from "./check_lists/entities/checkCurrent.entity";
+import { CardWorkers } from "./entities/cardworker.entity";
+import { CheckList } from "./check_lists/entities/check_list.entity";
+import { Check_current } from "./check_lists/entities/Check_current.entity";
 import { Comments } from "./comments/entities/comment.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Cards, CardWorker, CheckList, CheckCurrent, Comments])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Cards,
+      CardWorkers,
+      CheckList,
+      Check_current,
+      Comments,
+    ]),
+  ],
   controllers: [CardsController],
   providers: [CardsService],
 })
