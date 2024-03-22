@@ -19,6 +19,7 @@ import { ChangeDto } from "./dto/change-card.dto";
 import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
 import { User } from "src/common/decorator/user.decorator";
 
+
 @UseGuards(AuthGuard('jwt'))
 @Controller("/:boardId/:columnId/cards")
 
@@ -29,13 +30,19 @@ export class CardsController {
   
   
   // 카드 상세 조회
+
   @UseGuards(BoardMemberGuard)
-  @Get(":id")
-  async findCard(@Param("id") id: number) {
+  @Get(":cardId")
+  async findCard(
+    @Param("boardId") boardId: number,
+    @Param("columnId") columnId: number,
+    @Param("cardId") id: number,
+    ) {
     return this.cardsService.getCardsByColumnId(id);
   }
 
   // 카드 생성
+
   @UseGuards(BoardMemberGuard)
   @Post()
   async createCard(
@@ -59,6 +66,7 @@ export class CardsController {
   }
 
   // 카드 수정 / 담당자 변경
+
   @UseGuards(BoardMemberGuard)
   @Patch(":columnId/:id")
   async updateCard(
@@ -81,6 +89,7 @@ export class CardsController {
   }
 
   // 카드 삭제
+
   @UseGuards(BoardMemberGuard)
   @Delete(":columnId/:id")
   async deleteCard( 
@@ -117,6 +126,7 @@ export class CardsController {
   }
 
   // 작업자 변경
+
   @UseGuards(BoardMemberGuard)
   @Patch(":columnId/:id")
   async changeWorker(
@@ -139,6 +149,7 @@ export class CardsController {
 
 
   // 칼럼 내 위치 변경
+
   @UseGuards(BoardMemberGuard)
   @Patch(':id/:newOrderByCards')
   async changeCardPosition(
