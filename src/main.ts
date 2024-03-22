@@ -21,6 +21,7 @@ async function bootstrap() {
     }),
   );
   app.use(cookieparser());
+  app.use(cookieparser());
   const PORT = 3000;
   await app.listen(PORT);
   Logger.log(

@@ -38,6 +38,7 @@ export class CardsController {
   @UseGuards(BoardMemberGuard)
   @Post()
   async createCard(
+    @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
     @Body() CreateCardDto: CreateCardDto,
   ) {
@@ -57,7 +58,9 @@ export class CardsController {
   @UseGuards(BoardMemberGuard)
   @Patch(":columnId/:id")
   async updateCard(
-    @Param('id') id: number,
+    @Param("boardId") boardId: number,
+    @Param('columnId') columnId: number,
+    @Param('cardId') id: number,
     @Body() UpdateCardDto: UpdateCardDto,
   ) {
     const data = await this.cardsService.updateCard(
@@ -77,7 +80,9 @@ export class CardsController {
   @UseGuards(BoardMemberGuard)
   @Delete(":columnId/:id")
   async deleteCard( 
-    @Param('id') id: number) {
+    @Param("boardId") boardId: number,
+    @Param('columnId') columnId: number,
+    @Param('cardId') id: number) {
     await this.cardsService.deleteCard(id, Users.id);
 
     return{
@@ -90,7 +95,9 @@ export class CardsController {
   @UseGuards(BoardMemberGuard)
   @Patch(":columnId/:id")
   async assignWorker(
-    @Param('id') id:number,
+    @Param("boardId") boardId: number,
+    @Param('columnId') columnId: number,
+    @Param('cardId') id:number,
     @Body () AssignDto : AssignDto,
   ){
     const data = await this.cardsService.assignWorker(
@@ -109,7 +116,9 @@ export class CardsController {
   @UseGuards(BoardMemberGuard)
   @Patch(":columnId/:id")
   async changeWorker(
-    @Param('id') id:number,
+    @Param("boardId") boardId: number,
+    @Param('columnId') columnId: number,
+    @Param('cardId') id:number,
     @Body () changeDto : ChangeDto,
   ){
     const data = await this.cardsService.changeWorker(
@@ -129,7 +138,7 @@ export class CardsController {
   @UseGuards(BoardMemberGuard)
   @Patch(':id/:newOrderByCards')
   async changeCardPosition(
-    @Param('id') id: number,
+    @Param('cardId') id: number,
     @Param('newOrderByCards') newOrderByCards: number,
   ) {
       const data = await this.cardsService.changeOrderByCard(id, newOrderByCards);

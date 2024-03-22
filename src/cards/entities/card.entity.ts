@@ -4,7 +4,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
 } from "typeorm";
 import { Color } from "src/common/types/color.type";
 import { CardWorkers } from "./cardworker.entity";
@@ -31,7 +30,7 @@ import { CheckLists } from "../check_lists/entities/checkList.entity";
       default: Color.BLACK,
       nullable: false,
     })
-    color: Color; //진영님꺼 가져오기
+    color: Color; 
 
     @Column({ type: 'varchar', nullable: false })
     content: string;

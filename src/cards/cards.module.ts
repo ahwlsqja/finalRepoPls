@@ -8,6 +8,7 @@ import { Comments } from "./comments/entities/comment.entity";
 import { CheckCurrent } from "./check_lists/entities/checkCurrent.entity";
 import { CheckLists } from "./check_lists/entities/checkList.entity";
 import { NotificationModule } from "src/notification/notification.module";
+import { BoardsModule } from "src/boards/boards.module";
 
 @Module({
   imports: [
@@ -17,8 +18,9 @@ import { NotificationModule } from "src/notification/notification.module";
       CheckLists,
       CheckCurrent,
       Comments,
-      NotificationModule
     ]),
+    BoardsModule,
+    NotificationModule,
   ],
   controllers: [CardsController],
   providers: [CardsService],
