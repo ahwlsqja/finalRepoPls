@@ -13,4 +13,5 @@ export abstract class BaseModel {
 
   @CreateDateColumn()
   createdAt: Date;
+  static id: number;
 }

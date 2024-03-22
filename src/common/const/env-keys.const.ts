@@ -23,3 +23,4 @@ export const ENV_EMAIL_USER_PASS = 'GOOGLE_PASS'
 export const ENV_REDIS_HOST_KEY = 'REDIS_HOST'
 
 export const ENV_REDIS_PORT = "REDIS_PORT"
+
