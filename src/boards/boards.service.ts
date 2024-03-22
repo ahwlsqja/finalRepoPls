@@ -8,9 +8,10 @@ import { BoardMember } from "./entities/boardmember.entity";
 import { Users } from "src/users/entities/user.entity";
 import { InvitationDto } from "./dto/invite.dto";
 import { UsersService } from "src/users/users.service";
-import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager";
+import { CACHE_MANAGER, Cache, CacheKey } from "@nestjs/cache-manager";
 import { MailService } from "src/mail/mail.service";
 import _ from "lodash";
+import { NotificationsService } from "src/notification/notifications.service";
 
 @Injectable()
 export class BoardsService {
@@ -22,6 +23,7 @@ export class BoardsService {
     private readonly usersService: UsersService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly mailService: MailService,
+    private readonly notificationsService: NotificationsService,
     private dataSource: DataSource,
   ){}
 
@@ -50,8 +52,17 @@ export class BoardsService {
 
       // Host 유저 저장
       await queryRunner.manager.save(BoardMember, HostUser);
+
+      // 푸시 알림 보내기
+      await this.notificationsService.sendNotification({
+        type: 'boardCreated',
+        message: `보드가 생성되었습니다: ${savedBoard.title}.`,
+      })
+
       await queryRunner.commitTransaction(); // 트랜잭션 종료
+
       return { status: 201, message: '보드 생성 성공'};
+      
 
   } catch(error) {
     await queryRunner.rollbackTransaction();
@@ -123,6 +134,13 @@ async updateBoard(userId: number,
 
       // 4. board title에 저장
       await queryRunner.manager.save(Board, board);
+
+      // 푸시 알림 보내기
+      await this.notificationsService.sendNotification({
+        type: 'boardUpdate',
+        message: `보드가 생성되었습니다: ${board.title}.`,
+      })
+
       await queryRunner.commitTransaction(); // 트랜잭션 종료
       return { status: 201, message: '보드 수정 성공'};
     }catch(error) {
@@ -158,10 +176,26 @@ async updateBoard(userId: number,
       throw new NotFoundException('삭제 권한이 없습니다.');
       }
 
-      // 3. 삭제
-      await queryRunner.manager.delete(Board,id);
+      // 3. 삭제 대신 isDeleted 상태로 만듬.
+      await queryRunner.manager.update(Board,id, {
+        isDeleted: true,
+        deletedAt: new Date(),
+      });
+      // 4. 캐시에 삭제된 보드를 보관
+      const deleteCacheKey = `deletedBoard:${id}`;
+      const deletedBoardInfo = {
+        userId,
+        id
+      }
+      await this.cacheManager.set(deleteCacheKey, deletedBoardInfo, 60*60*24*30)
 
-      // 4. 트랜잭션 완료 및 종료
+      // 5. 푸시 알림 보내기
+      await this.notificationsService.sendNotification({
+        type: 'boardDelete',
+        message: `보드가 삭제되었습니다`,
+      })
+
+      // 6. 트랜잭션 완료 및 종료
       await queryRunner.commitTransaction(); // 트랜잭션 종료
       return { status: 201, message: '보드 삭제 성공'};
   }catch(error) {
@@ -170,6 +204,24 @@ async updateBoard(userId: number,
     } finally {
       await queryRunner.release(); 
     }
+  }
+
+
+  // 휴지통 복구
+  async restoreMyBoard(userId: number, id: number) {
+    const deleteCacheKey = `deletedBoard:${id}`;
+    const deletedBoardInfo = await this.cacheManager.get<{userId: number, id: number}>(deleteCacheKey);
+
+    if(!deletedBoardInfo || deletedBoardInfo.userId !== userId) {
+      throw new NotFoundException('복구 할 수 없습니다.')
+    }
+
+    await this.cacheManager.del(deleteCacheKey)
+    // 3. isDeleted 상태 바뀢기.
+    await this.boardRepository.update(id, {
+      isDeleted: false,
+      deletedAt: null,
+    });
   }
 
   // 보드에 맴버 초대
@@ -208,6 +260,12 @@ async updateBoard(userId: number,
 
       // 4. 유저 초대
       await this.inviteMember(memberEmail, boardOnly.id)
+
+      // 푸시 알림 보내기
+      await this.notificationsService.sendNotification({
+        type: 'boardCreated',
+        message: `유저에게 초대 이메일을 보냈습니다.: ${memberEmail}.`,
+      })
 
       await queryRunner.commitTransaction();
     }catch (error) {
@@ -259,6 +317,13 @@ async updateBoard(userId: number,
     });
 
     await this.boardMemberRepository.save(HostUser)
+
+    // 푸시 알림 보내기
+    await this.notificationsService.sendNotification({
+      type: 'boardCreated',
+      message: `${newBoardUser.name}님이 성공적으로 초대되었습니다.`,
+    })
+    
 
     await queryRunner.commitTransaction();
     return HostUser;

@@ -15,8 +15,8 @@ import { User } from "src/common/decorator/user.decorator";
 import { Users } from "src/users/entities/user.entity";
 import { InvitationDto } from "./dto/invite.dto";
 import { AuthenticateDto } from "./dto/authenticateEmailDto";
-import { BoardMemberGuard } from "./guard/boardmember.guard";
-import { BoardHostGuard } from "./guard/boardhost.guard";
+import { BoardMemberGuard } from "../auth/guard/boardmember.guard";
+import { BoardHostGuard } from "../auth/guard/boardhost.guard";
 import { Board } from "./entities/board.entity";
 
 @Controller("boards")

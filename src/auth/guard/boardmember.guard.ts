@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { BoardsService } from "../boards.service";
+import { BoardsService } from "../../boards/boards.service";
 
 @Injectable()
-export class BoardHostGuard implements CanActivate {
+export class BoardMemberGuard implements CanActivate {
     constructor(private boardService: BoardsService) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean>{
@@ -10,7 +10,7 @@ export class BoardHostGuard implements CanActivate {
         const user = request.user; 
         const boardId = request.params.boardId;
 
-        const member = await this.boardService.checkUserIsHostForGuard(user.id, boardId)
+        const member = await this.boardService.getBoardMember(user.id, boardId)
         return !!member
     }
 }

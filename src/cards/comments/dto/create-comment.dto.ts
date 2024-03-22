@@ -1,3 +1,10 @@
+
+import { IsNotEmpty, IsString } from "class-validator";
+
+export class CreateCommentDto {
+    @IsString()
+    @IsNotEmpty({ message: '댓글 내용을 입력해주세요.' })
+    content: string;
 import { IsNotEmpty, IsNumber, IsString, MaxLength } from "class-validator";
 
 export class CreateCommentDto {
@@ -8,4 +15,5 @@ export class CreateCommentDto {
   @IsNotEmpty({ message: "댓글 내용을 입력해주세요." })
   @MaxLength(50, { message: "댓글은 50자 이하로 작성해주세요." })
   content: string;
+
 }

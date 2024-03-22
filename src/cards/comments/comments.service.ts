@@ -1,3 +1,4 @@
+
 import {
   Injectable,
   InternalServerErrorException,
@@ -7,6 +8,9 @@ import { UpdateCommentDto } from "./dto/update-comment.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Comments } from "./entities/comment.entity";
 import { Repository } from "typeorm";
+
+@Injectable()
+export class CommentsService {
 import _ from "lodash";
 import { Cards } from "../entities/card.entity";
 

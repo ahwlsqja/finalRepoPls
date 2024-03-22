@@ -11,6 +11,9 @@ import {
 import { CommentsService } from "./comments.service";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
+import { AuthGuard } from "@nestjs/passport";
+
+@UseGuards(AuthGuard('jwt'))
 import { Users } from "src/users/entities/user.entity";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { User } from "src/common/decorator/user.decorator";
@@ -18,8 +21,9 @@ import { User } from "src/common/decorator/user.decorator";
 @ApiTags("Comments")
 @Controller("comments")
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(private readonly commentsService: CommentsService) { }
 
+}
   @ApiOperation({ summary: "카드 내 댓글 등록 API" })
   @Post("/:cardId")
   async createComment(
