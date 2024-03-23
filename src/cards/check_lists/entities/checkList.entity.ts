@@ -18,15 +18,15 @@ export class CheckLists extends BaseModel {
   @Column({ type: "date", nullable: false })
   updatedAt: Date;
 
-  @Column({ type: "bigint", nullable: false })
+  @Column({ type: "int", nullable: false, default: 1 })
   orderByCheck: number;
 
   @OneToMany(() => CheckCurrent, (checkCurrent) => checkCurrent.checkList, {
-    eager: true,
+    eager: true
   })
   checkCurrents: CheckCurrent[];
 
-  @ManyToOne(() => Cards, (card) => card.checkLists)
+@ManyToOne(() => Cards, (card) => card.checkLists, { onDelete: "CASCADE" })
   @JoinColumn({ name: "cardId", referencedColumnName: "id" })
   card: Cards | null;
 

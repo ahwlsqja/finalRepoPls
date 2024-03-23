@@ -13,25 +13,30 @@ import { UpdateCheckListDto } from "./dto/update-checkList.dto";
 import { ApiOperation } from "@nestjs/swagger";
 import { CreateCheckListDto } from "./dto/create-checkList.dto copy";
 import { AuthGuard } from "@nestjs/passport";
+import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
 
 @UseGuards(AuthGuard('jwt'))
-@Controller("checkLists")
+@Controller(":boardId/:columnId/:cardId/checkLists")
 export class CheckListsController {
   constructor(
     private readonly checkListsService: CheckListsService
     ) {}
 
   @ApiOperation({ summary: "카드 내 체크리스트 등록 API" })
-  @Post("/:cardId")
+  @UseGuards(BoardMemberGuard)
+  @Post()
   async createChecklist(
+    @Param("boardId") boardId: number,
+    @Param("columnId") columnId: number,
     @Param("cardId") cardId: number,
     @Body() createCheckListDto: CreateCheckListDto
     ) {
     const data = await this.checkListsService.createCheckList(
+      boardId,
+      columnId,
       cardId,
-      createCheckListDto.title
+      createCheckListDto
     );
-
     return {
       statusCode: HttpStatus.CREATED,
       message: "체크리스트 생성에 성공하였습니다.",

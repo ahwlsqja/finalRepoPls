@@ -24,6 +24,8 @@ export class CommentsService {
 
   async createComment(
     userId: number, 
+    boardId: number,
+    columnId: number,
     cardId: number, 
     content: string
     ) {
@@ -59,18 +61,18 @@ export class CommentsService {
     }
   }
 
-  async getCommentByCardId(cardId: number) {
-    const comments = await this.cardsRepository.findOne({
+  async getCommentByCommentId(commentId: number) {
+    const comment = await this.cardsRepository.findOne({
       where: {
-        id: cardId,
+        id: commentId,
       },
     });
 
-    if (!comments) {
-      throw new NotFoundException(`존재하지 않는 카드 ${cardId} 입니다.`);
+    if (!comment) {
+      throw new NotFoundException(`존재하지 않는 댓글 ${commentId} 입니다.`);
     }
 
-    return comments;
+    return comment;
   }
 
   async updateComment(
@@ -79,11 +81,13 @@ export class CommentsService {
     updateCommentDto: UpdateCommentDto,
   ) {
     try {
+      const { content } = updateCommentDto
       await this.verifyComment(userId, commentId);
-      return await this.commentsRepository.update(
-        { id: commentId },
-        updateCommentDto,
-      );
+      const updatedComment = await this.commentsRepository.save({
+        id: commentId,
+        content,
+    });
+      return updatedComment
     } catch (error) {
       throw new InternalServerErrorException(
         "댓글 수정 중 오류가 발생했습니다.",

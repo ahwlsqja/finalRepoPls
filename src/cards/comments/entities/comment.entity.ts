@@ -15,7 +15,7 @@ export class Comments extends BaseModel {
   @Column({ type: "bigint", nullable: true })
   userId: number;
 
-  @ManyToOne(() => Cards, (card) => card.comments)
+  @ManyToOne(() => Cards, (card) => card.comments, { onDelete: "CASCADE" })
   @JoinColumn({ name: "cardId", referencedColumnName: "id" })
   card: Cards | null;
 

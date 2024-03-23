@@ -38,6 +38,7 @@ export class BoardsService {
       await queryRunner.connect();
       await queryRunner.startTransaction('READ COMMITTED'); 
       try{
+        console.log('호스트', userId)
       // 보드 생성
 
       const createdBoard = queryRunner.manager.create(Board, createBoardDto)  
@@ -66,7 +67,7 @@ export class BoardsService {
         board: { id: savedBoard.id },
         isCreateUser: true
       });
-
+      console.log('호스트--------34', userId)
       // Host 유저 저장
       await queryRunner.manager.save(BoardMember, HostUser);
 

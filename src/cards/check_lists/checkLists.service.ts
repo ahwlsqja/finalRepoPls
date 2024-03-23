@@ -1,12 +1,13 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm";
+import { CheckLists } from "./entities/checkList.entity";
 import { Repository } from "typeorm";
 import { Cards } from "../entities/card.entity";
 import { CheckCurrent } from "./entities/checkCurrent.entity";
 import { CurrentStatus } from "./types/checkCurrent-status.type";
 import _ from "lodash";
 import { UpdateCheckListDto } from "./dto/update-checkList.dto";
-import { CheckLists } from "./entities/checkList.entity";
+import { CreateCheckListDto } from "./dto/create-checkList.dto copy";
 
 
 @Injectable()
@@ -21,38 +22,42 @@ export class CheckListsService {
     ) {}
 
     async createCheckList(
+        boardId: number,
+        columnId: number,
         cardId: number, 
-        title: string
+        createCheckListDto: CreateCheckListDto
         ) {
 
         try {
-            const card = await this.cardsRepository.findOne({
-                where: {
-                    id: cardId
-                }
-            });
-            if (!card) {
-                throw new InternalServerErrorException("해당 카드를 찾을 수 없습니다.");
-            }
+            // 해당 카드의 마지막 orderByCheck 값을 가져옴
+            const lastCheckList = await this.checkListsRepository.findOne({
+                where: { cardId },
+                order: { orderByCheck: 'DESC'}
+            })
+            
+            // 새로운 체크리스트 생성 시 마지막 orderByCheck 값에 1을 더함
+            const orderByCheck = lastCheckList ? lastCheckList.orderByCheck += 1 : 1
 
+            const { title } = createCheckListDto
             const checkList = this.checkListsRepository.create({
                 cardId,
-                title
+                title,
+                orderByCheck
             })
             await this.checkListsRepository.save(checkList)
 
-              // 체크리스트 제목을 입력하고, 처음에 생성할 때 기본적으로 3개의 할일 목록이 함께 생성되게 한다.
-              const defaultCurrents = ['1번째 할일', '2번째 할일', '3번째 할일'];
-              for (const currentTitle of defaultCurrents) {
-                  const current = this.checkCurrentRepository.create({
-                      checkListId: checkList.id,
-                      content: currentTitle,
-                      status: CurrentStatus.BACKLOG
-                  });
-                  await this.checkCurrentRepository.save(current);
+            // 체크리스트 제목을 입력하고, 처음에 생성할 때 기본적으로 3개의 할일 목록이 함께 생성되게 한다.
+            const defaultCurrents = ['1번째 할일', '2번째 할일', '3번째 할일'];
+            for (const currentTitle of defaultCurrents) {
+                const current = this.checkCurrentRepository.create({
+                    checkListId: checkList.id,
+                    content: currentTitle,
+                    status: CurrentStatus.BACKLOG
+                });
+                await this.checkCurrentRepository.save(current);
               }
-
             return checkList;
+
         } catch (error) {
             throw new InternalServerErrorException(
                 "체크리스트 생성 중 오류가 발생했습니다.",
@@ -66,11 +71,13 @@ export class CheckListsService {
         ) {
 
         try {
+            const { title } = updateCheckListDto;
             await this.getCheckListById(checkListId)
-            return await this.checkListsRepository.update(
-                { id: checkListId },
-                updateCheckListDto
-            )
+            const updatedCheckList = await this.checkListsRepository.save({
+                id: checkListId,
+                title
+            })
+            return updatedCheckList;
         } catch (error) {
             throw new InternalServerErrorException(
                 "체크리스트 수정 중 오류가 발생했습니다.",
@@ -86,7 +93,7 @@ export class CheckListsService {
         } catch (error) {
             throw new InternalServerErrorException(
                 "체크리스트 삭제 중 오류가 발생했습니다.",
-              );
+            );
         }
     }
 

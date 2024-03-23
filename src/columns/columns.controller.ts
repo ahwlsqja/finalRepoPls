@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, BadRequestException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, BadRequestException, UseGuards, HttpStatus } from '@nestjs/common';
 import { ColumnsService } from './columns.service';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
-import { Columns } from './entities/column.entity';
 import { BoardMemberGuard } from 'src/auth/guard/boardmember.guard';
 import { BoardsService } from 'src/boards/boards.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -17,6 +16,7 @@ export class ColumnsController {
     ) { }
 
   //칼럼 생성
+  //response 변경 및 서비스에서 card -> cards 변경
   @UseGuards(BoardMemberGuard)
   @Post()
   async create(
@@ -24,28 +24,47 @@ export class ColumnsController {
     @Body() createColumnDto: CreateColumnDto,
     ) {
         const ColumnCount = await this.columnsService.count(boardId); // 전체 칼럼 갯수
-        return await this.columnsService.create(
+        const data = await this.columnsService.create(
           boardId,
           createColumnDto,
           ColumnCount + 1, 
         );    
+        return {
+          statusCode: HttpStatus.CREATED,
+          messgae: '컬럼 생성에 성공하였습니다.',
+          ColumnCount,
+          data
+        }
   }
 
   // 특정 보드 모든 칼럼 조회
+  // response 변경
   @UseGuards(BoardMemberGuard)
   @Get('all/:boardId')
   async findAll(@Param('boardId') boardId: number) {
-    return await this.columnsService.findAll(boardId);
+    const data = await this.columnsService.findAll(boardId);
+    return {
+      statusCode: HttpStatus.OK,
+      messgae: '컬럼 조회에 성공하였습니다.',
+      data
+    }
   }
 
   // 특정 보드 칼럼 한개 조회
+  // response 변경
   @UseGuards(BoardMemberGuard)
   @Get(':columnId')
   async findOne(@Param('columnId') id: number) {
-    return await this.columnsService.findColumns(+id);
+    const data = await this.columnsService.findColumns(+id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: '컬럼 상세 조회에 성공하였습니다.',
+      data
+    }
   }
 
   // 컬럼 업데이트
+  // response 변경
   @UseGuards(BoardMemberGuard)
   @Patch(':columnId')
   async update(
@@ -53,7 +72,12 @@ export class ColumnsController {
     @Body() updateColumnDto: UpdateColumnDto
     )
     {
-    return await this.columnsService.update(+id, updateColumnDto);
+    const data = await this.columnsService.update(+id, updateColumnDto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: '컬럼 수정에 성공하였습니다.',
+      data
+    }
   }
 
   // 컬럼 이동
@@ -65,7 +89,8 @@ export class ColumnsController {
   ){
     await this.columnsService.swapOrder(id, newOrder);
     return {
-      message: '칼럼 순서를 변경하였습니다.'
+      statusCode: HttpStatus.OK,
+      message: '칼럼 순서를 변경하였습니다.',
     }
   }
 
@@ -73,6 +98,10 @@ export class ColumnsController {
   @UseGuards(BoardMemberGuard)
   @Delete(':columnId')
   async remove(@Param('columnId') id: number){
-    return await this.columnsService.remove(+id);
+    await this.columnsService.remove(+id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: '칼럼 삭제에 성공하였습니다.',
+    }
   }
 }

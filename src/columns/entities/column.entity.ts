@@ -42,6 +42,6 @@ export class Columns extends BaseModel {
   @JoinColumn({ name: "boardId", referencedColumnName: "id" })
   board: Board;
 
-  @OneToMany(() => Cards, (card) => card.column)
+  @OneToMany(() => Cards, (card) => card.column, { onDelete: "CASCADE"})
   cards: Cards[];
 }

@@ -39,10 +39,13 @@ export class ColumnsService {
       // 2. 컬럼 저장
       await this.columnsRepository.save(newColumn);
       // 푸시 알림 보내기
-    await this.notificationsService.sendNotification({
-      type: 'boardCreated',
-      message: `${title}칼럼이 성공적으로 생성되었습니다.`,
-    })
+      // await this.notificationsService.sendNotification({
+      //   type: 'boardCreated',
+      //   message: `${title}칼럼이 성공적으로 생성되었습니다.`,
+      // })
+
+      return newColumn;
+
       } catch(error) {
         await queryRunner.rollbackTransaction();
         return { status: 500, message: '칼럼 생성 실패'}
@@ -56,6 +59,7 @@ export class ColumnsService {
     const column = await this.columnsRepository
     .createQueryBuilder('columns') 
     .where('columns.boardId = :boardId', { boardId })
+    .leftJoinAndSelect('columns.cards', 'cards') // 칼럼이 카드이 없을 수도잇어서 left씀
     .leftJoinAndSelect('columns.cards', 'cards') // 칼럼이 카드이 없을 수도잇어서 left씀
     .getRawMany();
 
@@ -71,7 +75,11 @@ export class ColumnsService {
 
   // 칼럼 업데이트
   async update(id: number, updateColumnDto: UpdateColumnDto){
-    await this.columnsRepository.update({ id }, updateColumnDto)
+    const updateColumn = await this.columnsRepository.update({ id }, updateColumnDto)
+    return {
+      title: updateColumnDto.title,
+      color: updateColumnDto.color
+    };
   }
 
 
@@ -80,7 +88,7 @@ export class ColumnsService {
     
     const columnToRemove = await this.columnsRepository.findOneBy({ id })
     if(!columnToRemove) {
-      throw new Error('찾으려는 걸럼이 없습니다,')
+      throw new Error('찾으려는 컬럼이 없습니다,')
     }
 
     const orderByToRemove = columnToRemove.orderByColumns;
