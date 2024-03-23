@@ -28,7 +28,6 @@ export class CardsController {
     private readonly cardsService: CardsService
     ) {}
   
-  
   // 카드 상세 조회
 
   @UseGuards(BoardMemberGuard)
@@ -41,7 +40,7 @@ export class CardsController {
     return this.cardsService.getCardsByColumnId(id);
   }
 
-  // 카드 생성
+  // 카드 생성 o
 
   @UseGuards(BoardMemberGuard)
   @Post()
@@ -65,20 +64,19 @@ export class CardsController {
     }
   }
 
-  // 카드 수정 / 담당자 변경
+  // 카드 수정 o
 
   @UseGuards(BoardMemberGuard)
-  @Patch(":columnId/:id")
+  @Patch(":cardId")
   async updateCard(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
-    @Param('cardId') id: number,
+    @Param('cardId') cardId: number,
+    @User() user: Users,
     @Body() UpdateCardDto: UpdateCardDto,
   ) {
     const data = await this.cardsService.updateCard(
-      id,
-      UpdateCardDto.title,
-      UpdateCardDto.content,
+      cardId, UpdateCardDto
     );
 
     return{

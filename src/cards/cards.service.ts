@@ -6,7 +6,9 @@ import { Repository } from "typeorm";
 import { BaseModel } from "src/common/entities/basemodel.entitiy";
 import _ from "lodash";
 import { CreateCardDto } from "./dto/create-card.dto";
+import { UpdateCardDto } from "./dto/update-card.dto";
 import { CardWorkers } from "./entities/cardworker.entity";
+import { User } from "src/common/decorator/user.decorator";
 
 @Injectable()
 export class CardsService {
@@ -17,13 +19,14 @@ export class CardsService {
     private readonly cardWorkersRepository: Repository<CardWorkers>,
   ) {}
 
-  // 카드 상세 조회 #경복님이랑 +
+  // // 카드 상세 조회 #경복님이랑 +
   async getCardsByColumnId(columnId: number) {
     return await this.cardsRepository.findOne({
         where:{id: columnId,}
   });
   }
 
+  // 카드 생성
   async createCard(
     boardId: number, 
     columnId: number, 
@@ -61,13 +64,46 @@ export class CardsService {
     return card;
   }
 
+
    // 카드 수정  
-  async updateCard(id: number, title:string, content: string,) {
-    await this.cardsRepository.update({ id }, { title,content },);
-  }
+
+   async updateCard(
+    id: number, 
+    updateCardDto: UpdateCardDto
+    ) {
+      const updateCard = await this.cardsRepository.update({id}, updateCardDto)
+      return {
+        title:updateCardDto.title,
+        color:updateCardDto.color,
+        content:updateCardDto.content,
+        endDate:updateCardDto.endDate
+      }
+    }
+  //  const { title, color, content, endDate } = updateCardDto;
+
+  //  const card = await this.cardsRepository.findOne(id);
+   
+
+  //  card.title = title;
+  //  card.color = color;
+  //  card.content = content;
+  //  card.endDate = endDate;
+
+  //     await this.cardsRepository.save(card);
+  // }
+
+  // async updateCard(
+  //   id: number, 
+  //   title:string, 
+  //   content: string,
+  //   updateCardDto: UpdateCardDto
+  //   ) {
+  //   await this.cardsRepository.update({ id }, { title,content },);
+  // }
+
 
   // 카드 삭제
-  async deleteCard(id: number, userId: number) {
+  async deleteCard(id: number, userId: number) { 
     await this.verifyCard(id, userId);
     await this.cardsRepository.delete({ id });
   }

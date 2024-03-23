@@ -1,13 +1,21 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { CreateCardDto } from "./create-card.dto";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { Color } from "src/common/types/color.type";
 
 export class UpdateCardDto extends PartialType(CreateCardDto) {
     @IsString()
-    @IsNotEmpty({ message: ' 제목을 입력해주세요.' })
-    title: string;
-  
+    @IsOptional()
+    title?: string;
+
     @IsString()
-    @IsNotEmpty({ message: '내용을 입력해주세요.' })
-    content: string;
+    @IsOptional()
+    color?: Color;
+
+    @IsString()
+    @IsOptional()
+    content?: string;
+
+    @IsOptional()
+    endDate?: Date;
 }
