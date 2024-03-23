@@ -12,6 +12,8 @@ import { CACHE_MANAGER, Cache, CacheKey } from "@nestjs/cache-manager";
 import { MailService } from "src/mail/mail.service";
 import _ from "lodash";
 import { NotificationsService } from "src/notification/notifications.service";
+import { error } from "console";
+import { UpdateBoardDto } from "./dto/board.update.dto";
 
 @Injectable()
 export class BoardsService {
@@ -21,7 +23,7 @@ export class BoardsService {
     @InjectRepository(BoardMember)
     private readonly boardMemberRepository: Repository<BoardMember>,
     private readonly usersService: UsersService,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly mailService: MailService,
     private readonly notificationsService: NotificationsService,
     private dataSource: DataSource,
@@ -30,6 +32,7 @@ export class BoardsService {
   // 보드 생성
   async createBoard(
     userId: number ,
+    name: string,
     createBoardDto: CreateBoardDto) {
       const queryRunner = this.dataSource.createQueryRunner();
       await queryRunner.connect();
@@ -37,11 +40,25 @@ export class BoardsService {
       try{
         console.log('호스트', userId)
       // 보드 생성
+
       const createdBoard = queryRunner.manager.create(Board, createBoardDto)  
+      console.log(1)
       
       // 보드 저장
       const savedBoard = await queryRunner.manager.save(Board, createdBoard)
-      console.log('호스트--------12', userId)
+      console.log(savedBoard.title)
+      // 푸시 알림 보내기
+      try{
+      await this.notificationsService.sendNotification({
+        name,
+        type: 'boardCreated',
+        message: `보드가 생성되었습니다: ${savedBoard.title}.`,
+      })
+    }catch(error){
+      console.log(error)
+    }
+      console.log(1)
+
       // 보드 생성한 사용자 권한 부여하기
       const HostUser = queryRunner.manager.create(
         BoardMember,
@@ -53,15 +70,12 @@ export class BoardsService {
       console.log('호스트--------34', userId)
       // Host 유저 저장
       await queryRunner.manager.save(BoardMember, HostUser);
-      console.log('호스트--------56', userId)
-      // 푸시 알림 보내기
-      // await this.notificationsService.sendNotification({
-      //   type: 'boardCreated',
-      //   message: `보드가 생성되었습니다: ${savedBoard.title}.`,
-      // })
-      
+
+
+
       await queryRunner.commitTransaction(); // 트랜잭션 종료
-      
+
+
       return { status: 201, message: '보드 생성 성공'};
       
 
@@ -91,25 +105,37 @@ async getBoardByBoardId(id: number) {
 }
 
 // 유저가 속한 모든 보드 조회
-async getAllBoardById(userId: number) {
+async getAllBoardById(
+  userId: number,
+  name: string
+  ) {
   const boardMembers = await this.boardMemberRepository.find({
     where: { user: { id: userId } },
     relations: ['board'],
   });
+
+  await this.notificationsService.sendNotification({
+    name,
+    type: '현재 당신이 속한 모든 보드입니다.',
+    message: `유저가 속한 모든 보드 조회`,
+  })
 
   return boardMembers.map((boardMember) => boardMember.board);
 }
   
 // 보드 업데이트(호스트만 가능)
 async updateBoard(userId: number,
+   name: string,
    id: number, 
-   updateBoardDto: CreateBoardDto,
+   updateBoardDto: UpdateBoardDto,
    ) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('READ COMMITTED'); 
 
     try{
+    console.log(name)
+
       // 1. param로 만든 id에 따른 Board 찾기
       const board = await queryRunner.manager.findOne(Board,{
         where: { id },
@@ -137,13 +163,15 @@ async updateBoard(userId: number,
       await queryRunner.manager.save(Board, board);
 
       // 푸시 알림 보내기
-      // await this.notificationsService.sendNotification({
-      //   type: 'boardUpdate',
-      //   message: `보드가 생성되었습니다: ${board.title}.`,
-      // })
+      await this.notificationsService.sendNotification({
+        name,
+        type: '보드 업데이트',
+        message: `보드가 업데이트 되었습니다: ${board.title}.`,
+      })
 
       await queryRunner.commitTransaction(); // 트랜잭션 종료
       return { status: 201, message: '보드 수정 성공'};
+      
     }catch(error) {
       await queryRunner.rollbackTransaction();
       return { status: 500, message: '보드 수정 실패'};
@@ -153,16 +181,17 @@ async updateBoard(userId: number,
   }
 
   // 자신의 보드만 삭제
-  async removeMyBoard(userId: number, id: number) {
+  async removeMyBoard(userId: number, name: string, id: number) {
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('READ COMMITTED'); 
-
+    console.log(userId)
     try{
       // 1. param로 만든 id에 따른 Board 찾기
       const board = await queryRunner.manager.findOne(Board,{
         where: { id },
+        relations: ['boardmember']
       })
 
       if(!board) {
@@ -171,8 +200,7 @@ async updateBoard(userId: number,
 
       // 2. 호스트이고 보드 맴버에 속해있는 보드 맴버만 필터링
       const isUserHost = board.boardmember.some(
-        (boardmember) => boardmember.user.id === userId && boardmember.isAccepted);
-
+        boardmember => boardmember.userId === userId && boardmember.isCreateUser);
       if (!isUserHost) {
       throw new NotFoundException('삭제 권한이 없습니다.');
       }
@@ -190,11 +218,13 @@ async updateBoard(userId: number,
       }
       await this.cacheManager.set(deleteCacheKey, deletedBoardInfo, 60*60*24*30)
 
+
       // 5. 푸시 알림 보내기
-      // await this.notificationsService.sendNotification({
-      //   type: 'boardDelete',
-      //   message: `보드가 삭제되었습니다`,
-      // })
+      await this.notificationsService.sendNotification({
+        name,
+        type: 'boardDelete',
+        message: `보드가 삭제되었습니다`,
+      })
 
       // 6. 트랜잭션 완료 및 종료
       await queryRunner.commitTransaction(); // 트랜잭션 종료
@@ -209,7 +239,7 @@ async updateBoard(userId: number,
 
 
   // 휴지통 복구
-  async restoreMyBoard(userId: number, id: number) {
+  async restoreMyBoard(userId: number, id: number, name: string) {
     const deleteCacheKey = `deletedBoard:${id}`;
     const deletedBoardInfo = await this.cacheManager.get<{userId: number, id: number}>(deleteCacheKey);
 
@@ -223,6 +253,12 @@ async updateBoard(userId: number,
       isDeleted: false,
       deletedAt: null,
     });
+
+    await this.notificationsService.sendNotification({
+      name,
+      type: '삭제한 보드 복구.',
+      message: `삭제한 보드가 복구되었습니다.`,
+    })
   }
 
   // 보드에 맴버 초대
@@ -264,7 +300,8 @@ async updateBoard(userId: number,
 
       // 푸시 알림 보내기
       await this.notificationsService.sendNotification({
-        type: 'boardCreated',
+        name: user.name,
+        type: `보드에 ${invitedUser.name}을 초대하였습니다`,
         message: `유저에게 초대 이메일을 보냈습니다.: ${memberEmail}.`,
       })
 
@@ -321,7 +358,8 @@ async updateBoard(userId: number,
 
     // 푸시 알림 보내기
     await this.notificationsService.sendNotification({
-      type: 'boardCreated',
+      name: newBoardUser.name,
+      type: '보드 수락',
       message: `${newBoardUser.name}님이 성공적으로 초대되었습니다.`,
     })
     
@@ -382,7 +420,7 @@ async updateBoard(userId: number,
       boardId
     }
     // 캐싱은 {memberEmail: cacheValue} 로 레디스에 저장 
-    await this.cacheManager.set(memberEmail, cacheValue, 3600);
+    await this.cacheManager.set(memberEmail, cacheValue, 60*60*24*30);
 
     // 3. 이메일로 인증번호 보냄
     await this.sendCode(memberEmail, authenticateEmailCode)
