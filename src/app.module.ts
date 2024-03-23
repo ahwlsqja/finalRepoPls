@@ -81,6 +81,15 @@ import { CheckListsModule } from "./cards/check_lists/checkLists.module";
     MailModule,
     NotificationModule,
   ],
-  providers: [],
+  providers: [
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthTokenGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // }
+  ],
 })
 export class AppModule { }
