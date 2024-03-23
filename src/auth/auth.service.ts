@@ -40,7 +40,8 @@ export class AuthService {
             password : hashpassword,
             name,
             sshKey : hashsshkey,
-            role : Role.Admin
+            role : Role.Admin,
+            IsVaildated : true
           });
           
           await this.usersRepository.save(aduser);
@@ -50,12 +51,14 @@ export class AuthService {
           delete aduser.emailtoken;
           delete aduser.IsVaildated;
           return aduser;
+
         } else if (!sshKey) {
           const randomNum = () => {
             return Math.floor(1000 + Math.random() * 9000);
           };
           
           const token = String(randomNum());
+          
           const users = this.usersRepository.create({
               email,
               password : hashpassword,
