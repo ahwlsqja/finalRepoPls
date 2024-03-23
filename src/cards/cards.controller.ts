@@ -51,10 +51,12 @@ export class CardsController {
     @User() user: Users,
     @Body() createCardDto: CreateCardDto,
   ) {
+    const name = user.name
     const data = await this.cardsService.createCard(
       boardId,
       columnId,
       user.id,
+      name,
       createCardDto
     );
     
@@ -68,17 +70,19 @@ export class CardsController {
   // 카드 수정 / 담당자 변경
 
   @UseGuards(BoardMemberGuard)
-  @Patch(":columnId/:id")
+  @Patch(":columnId/:cardId")
   async updateCard(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
     @Param('cardId') id: number,
-    @Body() UpdateCardDto: UpdateCardDto,
+    @User() user: Users,
+    @Body() updateCardDto: UpdateCardDto,
   ) {
+    const name = user.name
     const data = await this.cardsService.updateCard(
       id,
-      UpdateCardDto.title,
-      UpdateCardDto.content,
+      name,
+      updateCardDto
     );
 
     return{
@@ -91,12 +95,15 @@ export class CardsController {
   // 카드 삭제
 
   @UseGuards(BoardMemberGuard)
-  @Delete(":columnId/:id")
+  @Delete(":columnId/:cardId")
   async deleteCard( 
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
-    @Param('cardId') id: number) {
-    await this.cardsService.deleteCard(id, Users.id);
+    @Param('cardId') id: number,
+    @User() user: Users,
+    ) {
+    const name = user.name
+    await this.cardsService.deleteCard(id, name);
 
     return{
       statusCode: HttpStatus.OK,  //200
@@ -106,16 +113,20 @@ export class CardsController {
 
   // 작업자 할당
   @UseGuards(BoardMemberGuard)
-  @Patch(":columnId/:id")
+  @Patch(":columnId/:cardId/:userId")
   async assignWorker(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
     @Param('cardId') id:number,
-    @Body () AssignDto : AssignDto,
+    @Param('userId') userId: number,
+    @User() user: Users,
   ){
+    const name = user.name
     const data = await this.cardsService.assignWorker(
       id,
-      AssignDto.tag
+      boardId,
+      name,
+      userId,
     )
 
     return{
@@ -125,24 +136,28 @@ export class CardsController {
     }
   }
 
-  // 작업자 변경
+  // 작업자 삭제(해제)
 
   @UseGuards(BoardMemberGuard)
-  @Patch(":columnId/:id")
+  @Patch(":columnId/:cardId/:userId")
   async changeWorker(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
     @Param('cardId') id:number,
-    @Body () changeDto : ChangeDto,
+    @Param('userId') userId: number,
+    @User() user: Users,
   ){
+    const name = user.name
     const data = await this.cardsService.changeWorker(
       id,
-      changeDto.tag
+      boardId,
+      name,
+      userId,
     )
 
     return{
       statusCode: HttpStatus.OK,  //200
-      message: "작업자 변경에 성공하였습니다.",
+      message: "작업자 삭제에 성공하였습니다.",
       data,
     }
   }
@@ -151,12 +166,12 @@ export class CardsController {
   // 칼럼 내 위치 변경
 
   @UseGuards(BoardMemberGuard)
-  @Patch(':id/:newOrderByCards')
+  @Patch(':cardId/:newOrder')
   async changeCardPosition(
     @Param('cardId') id: number,
-    @Param('newOrderByCards') newOrderByCards: number,
+    @Param('newOrder') newOrder: number,
   ) {
-      const data = await this.cardsService.changeOrderByCard(id, newOrderByCards);
+      const data = await this.cardsService.swapOrder(id, newOrder);
   
       return{
         statusCode: HttpStatus.OK,  //200

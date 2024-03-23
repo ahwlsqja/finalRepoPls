@@ -11,6 +11,7 @@ import { Comments } from "../comments/entities/comment.entity";
 import { BaseModel } from "src/common/entities/basemodel.entitiy";
 import { Columns } from "src/columns/entities/column.entity";
 import { CheckLists } from "../check_lists/entities/checkList.entity";
+import { Tag } from "../types/tag.type";
 @Entity({
   name: "cards",
 })
@@ -36,8 +37,13 @@ import { CheckLists } from "../check_lists/entities/checkList.entity";
     @Column({ type: 'int', nullable: false, default: 1 })
     orderByCards: number;
 
-    @Column({ type: 'bigint', nullable: true })
-    tag: number;
+    @Column("enum", {
+      name: "tag",
+      enum: Object.values(Tag),
+      default: Tag.Dev,
+      nullable: false,
+    })
+    tag: Tag;
 
     @Column({ type: 'date', nullable: false })
     endDate: Date;

@@ -19,7 +19,7 @@ export class ColumnsService {
 
 
   // 컬럼 생성
-  async create(boardId: number, createColumnDto: CreateColumnDto, orderByColumns : number) {
+  async create(boardId: number, name: string, createColumnDto: CreateColumnDto, orderByColumns : number) {
     
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -38,11 +38,12 @@ export class ColumnsService {
       });
       // 2. 컬럼 저장
       await this.columnsRepository.save(newColumn);
-      // 푸시 알림 보내기
-      // await this.notificationsService.sendNotification({
-      //   type: 'boardCreated',
-      //   message: `${title}칼럼이 성공적으로 생성되었습니다.`,
-      // })
+
+      await this.notificationsService.sendNotification({
+        name,
+        type: '컬럼 생성',
+        message: `칼럼이 성공적으로 생성되었습니다: ${title}`,
+      })
 
       return newColumn;
 
@@ -60,7 +61,6 @@ export class ColumnsService {
     .createQueryBuilder('columns') 
     .where('columns.boardId = :boardId', { boardId })
     .leftJoinAndSelect('columns.cards', 'cards') // 칼럼이 카드이 없을 수도잇어서 left씀
-    .leftJoinAndSelect('columns.cards', 'cards') // 칼럼이 카드이 없을 수도잇어서 left씀
     .getRawMany();
 
     return column;
@@ -74,17 +74,24 @@ export class ColumnsService {
 
 
   // 칼럼 업데이트
-  async update(id: number, updateColumnDto: UpdateColumnDto){
+  async update(id: number, name: string, updateColumnDto: UpdateColumnDto){
     const updateColumn = await this.columnsRepository.update({ id }, updateColumnDto)
+    await this.notificationsService.sendNotification({
+      name,
+      type: '컬럼 수정',
+      message: `칼럼이 성공적으로 업데이트 되었습니다`,
+    })
     return {
       title: updateColumnDto.title,
       color: updateColumnDto.color
     };
+
+    
   }
 
 
   // 칼럼 삭제
-  async remove(id: number){
+  async remove(id: number, name: string){
     
     const columnToRemove = await this.columnsRepository.findOneBy({ id })
     if(!columnToRemove) {
@@ -112,16 +119,16 @@ export class ColumnsService {
     
     // 푸시 알림 보내기
     await this.notificationsService.sendNotification({
-      type: 'boardCreated',
+      name,
+      type: '컬럼 삭제',
       message: `${columnToRemove.title}칼럼이 성공적으로 삭제되었습니다.`,
     })
   }
 
 
   // 칼럼 순서 바꾸기
-  async swapOrder(id: number, newOrder: number){
+  async swapOrder(id: number, name:string, newOrder: number){
 
-    const queryRunner = this.dataSource.createQueryRunner();
     // 바꾸려는 칼럼 찾기
     const columnToChange = await this.findColumns(id);
 
@@ -129,8 +136,10 @@ export class ColumnsService {
     const columnAtNewOrder = await this.columnsRepository.findOne({
       where: { orderByColumns: newOrder }
     })
+    console.log(columnAtNewOrder.orderByColumns)
 
-
+    const queryRunner = this.dataSource.createQueryRunner();
+    
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try{
@@ -160,13 +169,12 @@ export class ColumnsService {
 
      await queryRunner.commitTransaction(); 
 
-
-
     } catch(err) {
       await queryRunner.rollbackTransaction();
       console.log(err)
       
     } finally {
+      
     console.log(queryRunner.isReleased)
 
       if(!queryRunner.isReleased) {

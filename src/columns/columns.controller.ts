@@ -5,6 +5,8 @@ import { UpdateColumnDto } from './dto/update-column.dto';
 import { BoardMemberGuard } from 'src/auth/guard/boardmember.guard';
 import { BoardsService } from 'src/boards/boards.service';
 import { AuthGuard } from '@nestjs/passport';
+import { Users } from 'src/users/entities/user.entity';
+import { User } from 'src/common/decorator/user.decorator';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('/:boardId/columns')
@@ -21,11 +23,14 @@ export class ColumnsController {
   @Post()
   async create(
     @Param('boardId') boardId: number,
+    @User() user: Users,
     @Body() createColumnDto: CreateColumnDto,
     ) {
+        const name = user.name
         const ColumnCount = await this.columnsService.count(boardId); // 전체 칼럼 갯수
         const data = await this.columnsService.create(
           boardId,
+          name,
           createColumnDto,
           ColumnCount + 1, 
         );    
@@ -69,10 +74,12 @@ export class ColumnsController {
   @Patch(':columnId')
   async update(
     @Param('columnId') id: number,
+    @User() user: Users,
     @Body() updateColumnDto: UpdateColumnDto
     )
     {
-    const data = await this.columnsService.update(+id, updateColumnDto);
+    const name = user.name
+    const data = await this.columnsService.update(+id, name, updateColumnDto);
     return {
       statusCode: HttpStatus.OK,
       message: '컬럼 수정에 성공하였습니다.',
@@ -85,9 +92,11 @@ export class ColumnsController {
   @Patch(':columnId/:newOrder')
   async swapColumnOrder(
     @Param('columnId') id: number,
+    @User() user:Users,
     @Param('newOrder') newOrder: number,
   ){
-    await this.columnsService.swapOrder(id, newOrder);
+    const name = user.name
+    await this.columnsService.swapOrder(id,name, newOrder);
     return {
       statusCode: HttpStatus.OK,
       message: '칼럼 순서를 변경하였습니다.',
@@ -97,8 +106,12 @@ export class ColumnsController {
   // 칼럼 삭제
   @UseGuards(BoardMemberGuard)
   @Delete(':columnId')
-  async remove(@Param('columnId') id: number){
-    await this.columnsService.remove(+id);
+  async remove(
+    @Param('columnId') id: number,
+    @User() user: Users,
+    ){
+    const name = user.name
+    await this.columnsService.remove(+id, name);
     return {
       statusCode: HttpStatus.OK,
       message: '칼럼 삭제에 성공하였습니다.',
