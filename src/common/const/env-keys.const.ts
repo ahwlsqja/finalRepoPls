@@ -24,3 +24,6 @@ export const ENV_REDIS_HOST_KEY = 'REDIS_HOST'
 
 export const ENV_REDIS_PORT = "REDIS_PORT"
 
+export const ENV_REDIS_PASSWORD = "REDIS_PASSWORD"
+
+
