@@ -103,9 +103,15 @@ export class CardsService {
 
 
   // 카드 삭제
-  async deleteCard(id: number, userId: number) { 
-    await this.verifyCard(id, userId);
-    await this.cardsRepository.delete({ id });
+  async deleteCard(id: number) { 
+    const deleteCard = await this.cardsRepository.findOneBy({id})
+
+    if (!deleteCard) {
+      throw new Error ('존재하지 않는 카드ID 입니다.')
+    }
+
+    await this.cardsRepository.remove(deleteCard)
+    // await this.cardsRepository.delete({ id });
   }
 
   private async verifyCard(id: number, userId: number) {
