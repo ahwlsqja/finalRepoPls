@@ -9,13 +9,13 @@ import { ConfigService } from "@nestjs/config";
 import { NotificationModule } from "src/notification/notification.module";
 
 @Module({
-  imports: [AuthModule,NotificationModule,
+  imports: [AuthModule, NotificationModule,
     JwtModule.registerAsync({
     useFactory: (config: ConfigService) => ({
       secret: config.get<string>('JWT_SECRET'),
     }),
     inject: [ConfigService],
-  }),TypeOrmModule.forFeature([Users])],
+  }),TypeOrmModule.forFeature([Users]),],
   providers: [UsersService],
   controllers: [UsersController],
   exports : [UsersService]

@@ -15,13 +15,12 @@ export class Users extends BaseModel {
   @Column("varchar", { name: "password", nullable: false })
   password: string;
 
-  // @Column({ type: 'enum', enum: Role, default: Role.User })
-  // role: Role;
   @Column({
     enum: Object.values(Role),
     default: Role.User,
   })
   role: Role;
+  
   @Column('varchar', { name: "emailtoken", nullable: true })
   emailtoken: string;
 

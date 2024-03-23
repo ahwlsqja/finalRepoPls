@@ -1,7 +1,7 @@
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module } from "@nestjs/common";
-import { ENV_DB_DATABASE_KEY, ENV_DB_HOST_KEY, ENV_DB_PASSWORD_KEY, ENV_DB_PORT_KEY, ENV_DB_USERNAME_KEY, ENV_REDIS_HOST_KEY, ENV_REDIS_PASSWORD, ENV_REDIS_PORT } from "./common/const/env-keys.const";
+import { ENV_DB_DATABASE_KEY, ENV_DB_HOST_KEY, ENV_DB_PASSWORD_KEY, ENV_DB_PORT_KEY, ENV_DB_USERNAME_KEY, ENV_REDIS_HOST_KEY, ENV_REDIS_PORT, ENV_REDIS_PASSWORD } from "./common/const/env-keys.const";
 import { Board } from "./boards/entities/board.entity";
 import { Users } from "./users/entities/user.entity";
 import { CardWorkers } from "./cards/entities/cardworker.entity";
@@ -20,12 +20,9 @@ import { BoardMember } from "./boards/entities/boardmember.entity";
 import { CacheModule } from "@nestjs/cache-manager";
 import { CacheConfigService } from "./cache/cacheConfig.service";
 import { MailModule } from './mail/mail.module';
-import { APP_GUARD } from "@nestjs/core";
-import { RolesGuard } from "./auth/guard/roles.guard";
 import { BullModule } from "@nestjs/bull";
 import { NotificationModule } from './notification/notification.module';
 import { CheckLists } from "./cards/check_lists/entities/checkList.entity";
-import { AuthTokenGuard } from "./auth/guard/auth.guard";
 import { CommentsModule } from "./cards/comments/comments.module";
 import { CheckListsModule } from "./cards/check_lists/checkLists.module";
 
@@ -84,15 +81,6 @@ import { CheckListsModule } from "./cards/check_lists/checkLists.module";
     MailModule,
     NotificationModule,
   ],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthTokenGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    }
-  ],
+  providers: [],
 })
 export class AppModule { }
