@@ -26,7 +26,7 @@ export class CheckLists extends BaseModel {
   })
   checkCurrents: CheckCurrent[];
 
-@ManyToOne(() => Cards, (card) => card.checkLists, { onDelete: "CASCADE" })
+  @ManyToOne(() => Cards, (card) => card.checkLists, { onDelete: "CASCADE" })
   @JoinColumn({ name: "cardId", referencedColumnName: "id" })
   card: Cards | null;
 
