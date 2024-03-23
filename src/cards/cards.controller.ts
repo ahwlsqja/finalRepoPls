@@ -145,7 +145,6 @@ export class CardsController {
     }
   }
 
-
   // 칼럼 내 위치 변경
 
   @UseGuards(BoardMemberGuard)
