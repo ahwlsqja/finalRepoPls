@@ -7,7 +7,9 @@ import { CheckCurrent } from "./entities/checkCurrent.entity";
 import { CurrentStatus } from "./types/checkCurrent-status.type";
 import _ from "lodash";
 import { UpdateCheckListDto } from "./dto/update-checkList.dto";
-import { CreateCheckListDto } from "./dto/create-checkList.dto copy";
+import { CreateCheckListDto } from "./dto/create-checkList.dto";
+import { CreateCheckCurrentDto } from "./dto/create-checkCurrent.dto";
+import { UpdateCheckCurrentDto } from "./dto/update-checkCurrent.dto";
 
 
 @Injectable()
@@ -110,4 +112,65 @@ export class CheckListsService {
         }
         return checkList
       }
+
+    async createCheckCurrent(
+        boardId: number,
+        columnId: number,
+        cardId: number,
+        checkListId: number,
+        createCheckCurrentDto: CreateCheckCurrentDto
+    ) {
+        try {
+            const { content, status } = createCheckCurrentDto
+            const checkCrrent = this.checkCurrentRepository.create({
+                checkListId,
+                content,
+                status
+            })
+            await this.checkCurrentRepository.save(checkCrrent)
+            return checkCrrent;
+        } catch (error) {
+            throw new InternalServerErrorException(
+                "할 일 생성 중 오류가 발생했습니다.",
+              );
+        }
+    }
+
+    async updateCheckCurrent(
+        checkListId: number, 
+        checkCurrentId: number,
+        updateCheckCurrentDto: UpdateCheckCurrentDto
+        ) {
+
+        try {
+            const { content, status } = updateCheckCurrentDto;
+            await this.getCheckListById(checkListId)
+            const updatedCheckCurrent = await this.checkCurrentRepository.save({
+                id: checkCurrentId,
+                checkListId,
+                content,
+                status
+            })
+            return updatedCheckCurrent;
+        } catch (error) {
+            throw new InternalServerErrorException(
+                "할 일 수정 중 오류가 발생했습니다.",
+              );
+        }
+    }
+
+    async deleteCheckCurrent(
+        checkListId: number,
+        checkCurrentId: number
+        ) {
+
+        try {
+            await this.getCheckListById(checkListId)
+            return await this.checkCurrentRepository.delete({id: checkCurrentId})
+        } catch (error) {
+            throw new InternalServerErrorException(
+                "할 일 삭제 중 오류가 발생했습니다.",
+            );
+        }
+    }
 }
