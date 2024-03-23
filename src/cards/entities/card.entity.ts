@@ -11,7 +11,7 @@ import { CardWorkers } from "./cardworker.entity";
 import { Comments } from "../comments/entities/comment.entity";
 import { BaseModel } from "src/common/entities/basemodel.entitiy";
 import { Columns } from "src/columns/entities/column.entity";
-import { CheckList } from "../check_lists/entities/checkList.entity";
+import { CheckLists } from "../check_lists/entities/checkList.entity";
 
 @Entity({
   name: "cards",
@@ -54,10 +54,10 @@ import { CheckList } from "../check_lists/entities/checkList.entity";
     })
     cardworker: CardWorkers[];
 
-    @OneToMany(() => CheckList, (checkList) => checkList.card, {
+    @OneToMany(() => CheckLists, (checkList) => checkList.card, {
       eager: true,
     })
-    checkLists: CheckList[];
+    checkLists: CheckLists[];
 
   @ManyToOne(() => Columns, (column) => column.cards, {
     nullable: false,

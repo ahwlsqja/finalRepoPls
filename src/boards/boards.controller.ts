@@ -19,6 +19,7 @@ import { BoardMemberGuard } from "../auth/guard/boardmember.guard";
 import { BoardHostGuard } from "../auth/guard/boardhost.guard";
 import { Board } from "./entities/board.entity";
 import { AuthGuard } from "@nestjs/passport";
+import { UpdateBoardDto } from "./dto/board.update.dto";
 
 @UseGuards(AuthGuard('jwt'))
 @Controller("boards")
@@ -37,12 +38,12 @@ export class BoardsController {
     @Body() createBoardDto: CreateBoardDto,
     @User() user: Users,
     ) {
-    return this.boardsService.createBoard(user.id, createBoardDto);
+    return this.boardsService.createBoard(user.id, user.name, createBoardDto);
   }
 
 
 
-  // 특정 보드 조회
+  // 내 보드 조회
   @ApiOperation({
     summary: '특정 보드 조회 API',
     description: '보드를 조회합니다.',
@@ -70,7 +71,7 @@ export class BoardsController {
   async getAllBoardById(
     @User() user: Users,
   ) {
-    return this.boardsService.getAllBoardById(user.id)
+    return this.boardsService.getAllBoardById(user.id, user.name)
   }
 
 
@@ -80,10 +81,12 @@ export class BoardsController {
   @Patch(":id") // boardId 받는거임
   async updateBoard(
     @Param('id') id: number,
-    @Body() updateBoardDto: CreateBoardDto,
+    @Body() updateBoardDto: UpdateBoardDto,
     @User() user: Users,
   ){
-    return await this.boardsService.updateBoard(user.id, +id, updateBoardDto);
+    const name = user.name
+    console.log(name)
+    return await this.boardsService.updateBoard(user.id, name, +id, updateBoardDto);
   }
 
 
@@ -95,14 +98,15 @@ export class BoardsController {
     @Param('id') id: number,
     @User() user: Users) {
     const userId = user.id
-    return this.boardsService.removeMyBoard(userId, +id);
+    const name = user.name
+    return this.boardsService.removeMyBoard(userId,name, +id);
   }
 
 
   
   // 맴버 초대(호스트)
   @UseGuards(BoardHostGuard)
-  @Post('haveover')
+  @Post('haveover/:boardId')
   async inviteMember(
     @Param('boardId') boardId: number,
     @Body() invitationDto: InvitationDto,
@@ -127,4 +131,15 @@ export class BoardsController {
       return { message: `인증 및 초대 처리가 완료되었습니다. 반갑습니다. ${authenticateDto.memberEmail}님`, data: hostUser}
 
     }
+
+  // 보드 삭제 복구
+  @UseGuards(BoardHostGuard)
+  @Patch('restore/:id')
+  async restoreBoard(
+    @Param('id') id: number,
+    @User() user: Users
+  ) {
+    const name = user.name
+    return await this.boardsService.restoreMyBoard(user.id, id, name)
+  }
 }

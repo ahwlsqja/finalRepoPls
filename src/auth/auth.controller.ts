@@ -7,7 +7,6 @@ import { IsPublic } from 'src/common/decorator/is-public.decorator';
 
 
 @Controller("auth")
-@Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService ) {}
       

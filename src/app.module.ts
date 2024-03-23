@@ -67,6 +67,7 @@ import { AuthTokenGuard } from "./auth/guard/auth.guard";
         redis: {
           host: process.env[ENV_REDIS_HOST_KEY],
           port: parseInt(process.env[ENV_REDIS_PORT]),
+          password: 'redispassword'
         }
       })
     }),
@@ -80,14 +81,14 @@ import { AuthTokenGuard } from "./auth/guard/auth.guard";
     NotificationModule,
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthTokenGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    }
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthTokenGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // }
   ],
 })
 export class AppModule { }

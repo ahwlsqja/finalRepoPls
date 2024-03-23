@@ -56,7 +56,7 @@ export class ColumnsService {
     const column = await this.columnsRepository
     .createQueryBuilder('columns') 
     .where('columns.boardId = :boardId', { boardId })
-    .leftJoinAndSelect('columns.card', 'card') // 칼럼이 카드이 없을 수도잇어서 left씀
+    .leftJoinAndSelect('columns.cards', 'cards') // 칼럼이 카드이 없을 수도잇어서 left씀
     .getRawMany();
 
     return column;
@@ -77,6 +77,7 @@ export class ColumnsService {
 
   // 칼럼 삭제
   async remove(id: number){
+    
     const columnToRemove = await this.columnsRepository.findOneBy({ id })
     if(!columnToRemove) {
       throw new Error('찾으려는 걸럼이 없습니다,')
@@ -88,10 +89,11 @@ export class ColumnsService {
     await this.columnsRepository.remove(columnToRemove);
 
     // 삭제된 orderByColumns보다 큰 모든 칼럼 찾기
-    const columnsToUpdate = await this.columnsRepository
-      .createQueryBuilder()
-      .where('orderByColumns > :orderByToRemove', { orderByToRemove })
-      .orderBy('orderByColumns', 'ASC')
+    const columnsToUpdate = await this.dataSource
+      .getRepository(Columns)
+      .createQueryBuilder('columns')
+      .where(`columns.orderByColumns > :orderByToRemove`, { orderByToRemove })
+      .orderBy('columns.orderByColumns', 'ASC')
       .getMany();
 
 
@@ -110,8 +112,8 @@ export class ColumnsService {
 
   // 칼럼 순서 바꾸기
   async swapOrder(id: number, newOrder: number){
-    const queryRunner = this.dataSource.createQueryRunner();
 
+    const queryRunner = this.dataSource.createQueryRunner();
     // 바꾸려는 칼럼 찾기
     const columnToChange = await this.findColumns(id);
 
@@ -120,9 +122,9 @@ export class ColumnsService {
       where: { orderByColumns: newOrder }
     })
 
+
     await queryRunner.connect();
     await queryRunner.startTransaction();
-
     try{
     // 두 칼럼 순서 스왑
     if(columnToChange && columnAtNewOrder) {
@@ -146,14 +148,24 @@ export class ColumnsService {
       .set({ orderByColumns: columnToChange.orderByColumns })
       .execute() 
     } 
-    queryRunner.commitTransaction()
-      
+    
+
+     await queryRunner.commitTransaction(); 
+
+
+
     } catch(err) {
       await queryRunner.rollbackTransaction();
-      throw err
+      console.log(err)
+      
     } finally {
+    console.log(queryRunner.isReleased)
+
+      if(!queryRunner.isReleased) {
+
         await queryRunner.release();
       }
+    }
   }
 
   // 개수세는 함수
