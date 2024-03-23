@@ -5,11 +5,18 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { UsersService } from "./users.service";
 import { Roles } from "./decorators/roles.decorator";
 import { Role } from "./types/userRole.type";
+import { RolesGuard } from "src/auth/guard/roles.guard";
+import { NotificationsService } from "src/notification/notifications.service";
+import { TokenDto } from "./dto/update-token.dto";
+import { AuthGuard } from "@nestjs/passport";
+
 
 @UseGuards(RolesGuard)
+@UseGuards(AuthGuard('jwt'))
 @Controller("users")
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService,
+    private readonly notificationsService : NotificationsService) {}
 
 
   @Roles(Role.Admin)
@@ -23,11 +30,13 @@ export class UsersController {
     return await this.usersService.findOne(id, user);
   }
 
+
   @Patch('profile/:id')
   async update(@Param('id') id : number, @User() user : Users, 
   @Body() updateUserDto: UpdateUserDto) {
     return await this.usersService.update(id, user, updateUserDto);
   }
+
 
   @Patch("token")
   async tokenupdate(
@@ -37,11 +46,13 @@ export class UsersController {
     return await this.usersService.tokenupdate(tokenDto.email, tokenDto.emailtoken, user);
   }
 
+
   @Delete('profile/:id')
   async remove(@Param('id') id : number, @User() user : Users) {
     return await this.usersService.remove(id, user);
   }
   
+
   @Get("alarm")
   async getNotifications(
     @User() user : Users,

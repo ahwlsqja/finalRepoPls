@@ -23,6 +23,8 @@ import { MailModule } from './mail/mail.module';
 import { BullModule } from "@nestjs/bull";
 import { NotificationModule } from './notification/notification.module';
 import { CheckLists } from "./cards/check_lists/entities/checkList.entity";
+import { CommentsModule } from "./cards/comments/comments.module";
+import { CheckListsModule } from "./cards/check_lists/checkLists.module";
 
 
 
