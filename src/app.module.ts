@@ -1,7 +1,7 @@
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module } from "@nestjs/common";
-import { ENV_DB_DATABASE_KEY, ENV_DB_HOST_KEY, ENV_DB_PASSWORD_KEY, ENV_DB_PORT_KEY, ENV_DB_USERNAME_KEY, ENV_REDIS_HOST_KEY, ENV_REDIS_PASSWORD, ENV_REDIS_PORT } from "./common/const/env-keys.const";
+import { ENV_DB_DATABASE_KEY, ENV_DB_HOST_KEY, ENV_DB_PASSWORD_KEY, ENV_DB_PORT_KEY, ENV_DB_USERNAME_KEY, ENV_REDIS_HOST_KEY, ENV_REDIS_PORT, ENV_REDIS_PASSWORD } from "./common/const/env-keys.const";
 import { Board } from "./boards/entities/board.entity";
 import { Users } from "./users/entities/user.entity";
 import { CardWorkers } from "./cards/entities/cardworker.entity";

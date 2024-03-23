@@ -58,9 +58,9 @@ export class UsersController {
     @User() user : Users,
   ) {
     // 레디스에서 알림데이터 조회
-    const name = user.name
+    const name = user.name;
 
-    const notification = await this.notificationsService.getNotifications(name)
-    return notification
+    const notification = await this.notificationsService.getNotifications(name);
+    return notification;
   }
 }
