@@ -18,11 +18,11 @@ export class AuthTokenGuard extends AuthGuard('jwt') implements CanActivate {
         );
     
         const req = context.switchToHttp().getRequest();
-    
         if(isPublic){
           req.isRoutePublic = true;
     
           return true;
         }
+        return super.canActivate(context) as Promise<boolean>
 }
 }

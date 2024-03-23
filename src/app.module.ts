@@ -50,7 +50,6 @@ import { CheckListsModule } from "./cards/check_lists/checkLists.module";
         CardWorkers,
         Cards,
         CheckLists,
-        CheckLists,
         Columns,
         BaseModel,
         CheckCurrent,
@@ -70,6 +69,7 @@ import { CheckListsModule } from "./cards/check_lists/checkLists.module";
         redis: {
           host: process.env[ENV_REDIS_HOST_KEY],
           port: parseInt(process.env[ENV_REDIS_PORT]),
+          password: 'redispassword'
         }
       })
     }),
@@ -85,16 +85,14 @@ import { CheckListsModule } from "./cards/check_lists/checkLists.module";
     NotificationModule,
   ],
   providers: [
-
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthTokenGuard,
-    // },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard,
-    // }
-
+    {
+      provide: APP_GUARD,
+      useClass: AuthTokenGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    }
   ],
 })
 export class AppModule { }

@@ -8,7 +8,8 @@ export class CacheConfigService implements CacheOptionsFactory {
     createCacheOptions(): CacheModuleOptions {
         const config: CacheModuleOptions = {
             store: redisStore,
-            host: 'some-redis',
+            host: 'localhost',
+            password: 'redispassword',
             port: 6379,
             ttl :60,
         };

@@ -6,9 +6,10 @@ import { Users } from "./entities/user.entity";
 import { AuthModule } from "src/auth/auth.module";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { NotificationModule } from "src/notification/notification.module";
 
 @Module({
-  imports: [AuthModule,
+  imports: [AuthModule,NotificationModule,
     JwtModule.registerAsync({
     useFactory: (config: ConfigService) => ({
       secret: config.get<string>('JWT_SECRET'),
