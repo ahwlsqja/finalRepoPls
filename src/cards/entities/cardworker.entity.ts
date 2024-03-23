@@ -21,6 +21,6 @@ export class CardWorkers {
   @JoinColumn({ name: "boardmemberId", referencedColumnName: "id" })
   boardmember: BoardMember | null;
 
-  @Column({ type: "bigint", nullable: true })
+  @Column({ type: "int", nullable: true })
   boardmemberId: number;
 }
