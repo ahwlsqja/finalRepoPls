@@ -15,7 +15,7 @@ export class CheckCurrent extends BaseModel {
   @Column({ type: "enum", enum: CurrentStatus, nullable: false })
   status: CurrentStatus;
 
-  @ManyToOne(() => CheckLists, (checkList) => checkList.checkCurrents)
+  @ManyToOne(() => CheckLists, (checkList) => checkList.checkCurrents, { onDelete: "CASCADE" })
   @JoinColumn({ name: "checkListId", referencedColumnName: "id" })
   checkList: CheckLists | null;
 

@@ -97,8 +97,8 @@ export class ColumnsService {
     // 삭제된 orderByColumns보다 큰 모든 칼럼 찾기
     const columnsToUpdate = await this.columnsRepository
       .createQueryBuilder()
-      .where('orderByColumns > :orderByToRemove', { orderByToRemove })
-      .orderBy('orderByColumns', 'ASC')
+      .where("orderByColumns > :orderByToRemove", { orderByToRemove })
+      .orderBy("orderByColumns", "ASC")
       .getMany();
 
 
