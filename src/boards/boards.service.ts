@@ -42,11 +42,9 @@ export class BoardsService {
       // 보드 생성
 
       const createdBoard = queryRunner.manager.create(Board, createBoardDto)  
-      console.log(1)
       
       // 보드 저장
       const savedBoard = await queryRunner.manager.save(Board, createdBoard)
-      console.log(savedBoard.title)
       // 푸시 알림 보내기
       try{
       await this.notificationsService.sendNotification({
@@ -57,7 +55,6 @@ export class BoardsService {
     }catch(error){
       console.log(error)
     }
-      console.log(1)
 
       // 보드 생성한 사용자 권한 부여하기
       const HostUser = queryRunner.manager.create(
