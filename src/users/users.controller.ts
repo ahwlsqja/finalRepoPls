@@ -3,19 +3,13 @@ import { User } from "src/common/decorator/user.decorator";
 import { Users } from "./entities/user.entity";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UsersService } from "./users.service";
-
 import { Roles } from "./decorators/roles.decorator";
 import { Role } from "./types/userRole.type";
-import { IsPublic } from "src/common/decorator/is-public.decorator";
-import { AuthGuard } from "@nestjs/passport";
-import { NotificationsService } from "src/notification/notifications.service";
 
+@UseGuards(RolesGuard)
 @Controller("users")
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly notificationsService: NotificationsService
-    ) {}
+  constructor(private readonly usersService: UsersService) {}
 
 
   @Roles(Role.Admin)
@@ -24,41 +18,30 @@ export class UsersController {
     return await this.usersService.findAll();
   }
 
-
   @Get("profile/:id")
-  @IsPublic()
-  async findOne(@Param("id") id: number) {
-    return await this.usersService.findOne(id);
+  async findOne(@Param('id') id: number, @User() user : Users) {
+    return await this.usersService.findOne(id, user);
   }
 
-  @Patch('profile')
-  async update(@User() user : Users, 
+  @Patch('profile/:id')
+  async update(@Param('id') id : number, @User() user : Users, 
   @Body() updateUserDto: UpdateUserDto) {
-    return await this.usersService.update(user.id, updateUserDto);
+    return await this.usersService.update(id, user, updateUserDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Patch("token")
   async tokenupdate(
-    @Body() body ,
+    @Body() tokenDto : TokenDto,
     @User() user: Users,
   ) {
-    const email = body.email;
-    const emailtoken = body.emailtoken;
-
-    if(emailtoken !== user.emailtoken){
-      throw new Error("인증 번호가 맞지 않습니다.");
-    }
-    
-    return await this.usersService.tokenupdate(email);
+    return await this.usersService.tokenupdate(tokenDto.email, tokenDto.emailtoken, user);
   }
 
-  @Delete('profile')
-  async remove(@User() user : Users) {
-    return await this.usersService.remove(user.id);
+  @Delete('profile/:id')
+  async remove(@Param('id') id : number, @User() user : Users) {
+    return await this.usersService.remove(id, user);
   }
   
-  @UseGuards(AuthGuard('jwt'))
   @Get("alarm")
   async getNotifications(
     @User() user : Users,
