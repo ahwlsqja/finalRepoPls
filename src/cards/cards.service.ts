@@ -191,8 +191,8 @@ export class CardsService {
 
     // 2. 초대할려는 유저의 존재성 검사
     const isBoardMember = await this.boardsService.getBoardMember(userId, boardId)
-
-    if(!isBoardMember) {
+    if(!isBoardMember)
+    {
       throw new Error("할당하려는 유저가 없습니다.")
     }
 
@@ -229,21 +229,8 @@ export class CardsService {
       message: `카드작업자가 등록 되었습니다: ${name}`,
     })
 
-    await queryRunner.manager.save(CardWorkers, cardWorker);
-    
-    await queryRunner.commitTransaction(); // 트랜잭션 종료
+    return await this.cardsRepository.save(cardWorker);
 
-    return card;
-
-  } catch(error) {
-    await queryRunner.rollbackTransaction();
-    console.log("담당자 지정 에러:", error)
-    throw new InternalServerErrorException(
-      "담당자 지정 중 오류가 발생했습니다.",
-    );
-  } finally {
-    await queryRunner.release(); 
-  }
   }
 
   // 담당자 지정 해제

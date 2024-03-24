@@ -77,9 +77,6 @@ export class CardsController {
 
   // 카드 수정
   @UseGuards(BoardMemberGuard)
-  @ApiOperation({ summary: "컬럼 내 카드 수정 API " })
-  @ApiBearerAuth("access-token")
-  @ApiBody({ type: UpdateCardDto })
   @Patch(":cardId")
   async updateCard(
     @Param("boardId") boardId: number,
@@ -104,8 +101,6 @@ export class CardsController {
 
   // 카드 삭제
   @UseGuards(BoardMemberGuard)
-  @ApiOperation({ summary: "컬럼 내 카드 삭제 API " })
-  @ApiBearerAuth("access-token")
   @Delete(":cardId")
   async deleteCard( 
     @Param("boardId") boardId: number,
@@ -125,9 +120,7 @@ export class CardsController {
   // 담당자 지정
   @ApiTags("Cards 담당자 지정")
   @UseGuards(BoardMemberGuard)
-  @ApiOperation({ summary: "카드 담당자 지정 API " })
-  @ApiBearerAuth("access-token")
-  @Patch("/assign/:cardId/:userId")
+  @Patch(":cardId/:userId")
   async assignWorker(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
@@ -153,10 +146,8 @@ export class CardsController {
   // 담당자 지정 해제
   @ApiTags("Cards 담당자 지정 해제")
   @UseGuards(BoardMemberGuard)
-  @ApiOperation({ summary: "카드 담당자 지정 해제 API " })
-  @ApiBearerAuth("access-token")
-  @Patch("/cancel/:cardId/:userId")
-  async cancelAssignWorker(
+  @Patch(":cardId/:userId")
+  async changeWorker(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
     @Param('cardId') id:number,

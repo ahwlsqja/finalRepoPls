@@ -55,15 +55,12 @@ export class BoardsController {
   @ApiResponse({ type: Board })
   @Get(':id')
   async getBoardByBoardId(
-    @Param('id') id: number)
+    @Param('id') id: number, @User() user : Users)
   {
-    const data = this.boardsService.getBoardByBoardId(id)
-    return {
-      statusCode: HttpStatus.OK,
-      message: "보드 상세 조회에 성공하였습니다.",
-      data
-    }
+    return this.boardsService.getBoardByBoardId(id, user)
   }
+ 
+
 
   // 로그인한 id 기반으로 특정 보드 조회
   @ApiOperation({ summary: '자신의 보드 조회 API' })

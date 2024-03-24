@@ -1,5 +1,5 @@
 
-import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { ForbiddenException, Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { CreateBoardDto } from "./dto/create-board.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Board } from "./entities/board.entity";
@@ -91,11 +91,23 @@ async getBoardMember(userId: number, boardId: number){
 
 
 // 특정 보드 조회
-async getBoardByBoardId(id: number) {
+async getBoardByBoardId(id: number, user : Users) {
+  const users = await this.usersService.findid(id);
   const board = await this.boardMemberRepository.findOneBy({ id });
   if(!board) {
     throw new NotFoundException('해당 보드를 찾을 수 없습니다.')
   }
+
+  if(user.role === 1){
+    return board;
+  } else if(!board){
+    throw new NotFoundException("보드가 존재하지 않습니다.");
+  }
+
+  if(users.role !== user.role){
+    throw new ForbiddenException("접근할 수 없는 유저입니다.");
+  }
+
   return board
 }
 
@@ -264,6 +276,10 @@ async updateBoard(userId: number,
     await queryRunner.startTransaction('READ COMMITTED'); 
     try{
       const { memberEmail } = invitationDto
+
+      // if(user.IsVaildated === false){
+      //   throw new Error("이메일 인증을 거쳐야 하는 회원입니다.")
+      // }
 
       // 1. 로그인한 유저가 호스트인지 검사
       const userOnly = await this.usersService.findemail(user.email) // 현재 로그

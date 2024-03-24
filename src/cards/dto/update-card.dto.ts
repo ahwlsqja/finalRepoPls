@@ -36,12 +36,6 @@ export class UpdateCardDto extends PartialType(CreateCardDto) {
     @IsString()
     @IsNotEmpty({ message: '카드 내용을 입력해주세요.' })
     content?: string;
-    
-    @ApiProperty({
-        example: "Dev",
-        description: "수정할 카드 담당 부서 Tag",
-    })
-
     @IsOptional()
     @IsEnum(Tag, { message: '유효하지 않은 부서 입니다. 다시 입력해주세요'})
     @IsNotEmpty({ message: '부서를 입력해주세요.' })

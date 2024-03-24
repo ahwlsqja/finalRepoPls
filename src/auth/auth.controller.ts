@@ -29,9 +29,8 @@ export class AuthController {
     res.cookie("authorization", `Bearer ${user.access_token}`);
     res.send({
       statusCode: HttpStatus.OK,
-      message: "로그인에 성공하였습니다.",
-      user
+      messgae: '로그인에 성공하였습니다.',
+      access_token : user.access_token
     });
-
   }
 }

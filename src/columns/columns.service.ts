@@ -136,7 +136,6 @@ export class ColumnsService {
     const columnAtNewOrder = await this.columnsRepository.findOne({
       where: { orderByColumns: newOrder }
     })
-    console.log(columnAtNewOrder.orderByColumns)
 
     const queryRunner = this.dataSource.createQueryRunner();
     
