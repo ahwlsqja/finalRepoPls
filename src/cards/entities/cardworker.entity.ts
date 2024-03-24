@@ -8,7 +8,7 @@ import { BoardMember } from "src/boards/entities/boardmember.entity";
 export class CardWorkers {
   @PrimaryGeneratedColumn()
   id: number;
-
+  
   @ManyToOne(() => Cards, (card) => card.cardworkers, {
     onDelete: "CASCADE",
   })
@@ -21,6 +21,6 @@ export class CardWorkers {
   @JoinColumn({ name: "boardmemberId", referencedColumnName: "id" })
   boardmember: BoardMember | null;
 
-  @Column({ type: "int", nullable: true })
+  @Column({ type: "int", nullable: false })
   boardmemberId: number;
 }

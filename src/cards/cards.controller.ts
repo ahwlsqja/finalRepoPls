@@ -32,6 +32,7 @@ export class CardsController {
   // 카드 상세 조회
 
   @UseGuards(BoardMemberGuard)
+  // /:boardId/:columnId/cards/:cardId
   @Get(":cardId")
   async findCard(
     @Param("boardId") boardId: number,
@@ -44,6 +45,7 @@ export class CardsController {
   // 카드 생성
 
   @UseGuards(BoardMemberGuard)
+  // /:boardId/:columnId/cards
   @Post()
   async createCard(
     @Param("boardId") boardId: number,
@@ -70,7 +72,8 @@ export class CardsController {
   // 카드 수정 / 담당자 변경
 
   @UseGuards(BoardMemberGuard)
-  @Patch(":columnId/:cardId")
+  // /:boardId/:columnId/cards/:cardId
+  @Patch(":cardId")
   async updateCard(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
@@ -95,7 +98,8 @@ export class CardsController {
   // 카드 삭제
 
   @UseGuards(BoardMemberGuard)
-  @Delete(":columnId/:cardId")
+  // /:boardId/:columnId/cards/:cardId
+  @Delete(":cardId")
   async deleteCard( 
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
@@ -113,7 +117,8 @@ export class CardsController {
 
   // 작업자 할당
   @UseGuards(BoardMemberGuard)
-  @Patch(":columnId/:cardId/:userId")
+  // /:boardId/:columnId/cards/:cardId/:userId
+  @Patch(":cardId/:userId")
   async assignWorker(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
@@ -139,7 +144,8 @@ export class CardsController {
   // 작업자 삭제(해제)
 
   @UseGuards(BoardMemberGuard)
-  @Patch(":columnId/:cardId/:userId")
+  // /:boardId/:columnId/cards/:cardId/:userId
+  @Patch(":cardId/:userId")
   async changeWorker(
     @Param("boardId") boardId: number,
     @Param('columnId') columnId: number,
@@ -166,7 +172,8 @@ export class CardsController {
   // 칼럼 내 위치 변경
 
   @UseGuards(BoardMemberGuard)
-  @Patch(':cardId/:newOrder')
+  // /:boardId/:columnId/cards/Order/:newOrder
+  @Patch(':cardId/Order/:newOrder')
   async changeCardPosition(
     @Param('cardId') id: number,
     @Param('newOrder') newOrder: number,

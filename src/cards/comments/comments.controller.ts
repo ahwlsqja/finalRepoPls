@@ -36,11 +36,13 @@ export class CommentsController {
     @Param("cardId") cardId: number,
     @Body() createCommentDto: CreateCommentDto,
   ) {
+    const name = user.name
     const data = await this.commentsService.createComment(
       user.id, 
       boardId,
       columnId,
       cardId,
+      name,
       createCommentDto.content,
     );
 
@@ -51,6 +53,7 @@ export class CommentsController {
     };
   }
 
+  @UseGuards(BoardMemberGuard)
   @ApiOperation({ summary: "카드 내 댓글 상세 조회 API " })
   @ApiBearerAuth("access-token")
   @Get("/:commentId")
@@ -66,6 +69,7 @@ export class CommentsController {
     };
   }
 
+  @UseGuards(BoardMemberGuard)
   @ApiOperation({ summary: "카드 내 댓글 수정 API " })
   @ApiBearerAuth("access-token")
   @ApiBody({ type: UpdateCommentDto })
@@ -75,8 +79,10 @@ export class CommentsController {
     @Param("commentId") commentId: number,
     @Body() updateCommentDto: UpdateCommentDto,
   ) {
+    const name = user.name
     const data = await this.commentsService.updateComment(
       user.id,
+      name,
       commentId,
       updateCommentDto,
     );
@@ -86,7 +92,8 @@ export class CommentsController {
       data,
     };
   }
-
+  
+  @UseGuards(BoardMemberGuard)
   @ApiOperation({ summary: "카드 내 댓글 삭제 API " })
   @ApiBearerAuth("access-token")
   @Delete("/:commentId")
@@ -94,7 +101,8 @@ export class CommentsController {
     @User() user: Users,
     @Param("commentId") commentId: number,
   ) {
-    await this.commentsService.deleteComment(user.id, commentId);
+    const name = user.name
+    await this.commentsService.deleteComment(user.id, name, commentId);
     return {
       statusCode: HttpStatus.OK,
       message: "댓글 삭제에 성공하였습니다.",
