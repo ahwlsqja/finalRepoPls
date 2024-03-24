@@ -19,7 +19,7 @@ import { UpdateCheckCurrentDto } from "./dto/update-checkCurrent.dto";
 
 
 @UseGuards(AuthGuard('jwt'))
-@Controller(":boardId/:columnId/:cardId")
+@Controller("/boards/:boardId/columns/:columnId/cards/:cardId")
 export class CheckListsController {
   constructor(
     private readonly checkListsService: CheckListsService
