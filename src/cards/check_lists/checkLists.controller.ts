@@ -31,7 +31,6 @@ export class CheckListsController {
   @ApiOperation({ summary: "카드 내 체크리스트 등록 API" })
   @ApiBearerAuth("access-token")
   @ApiBody({ type: CreateCheckListDto })
-  // /boards/:boardId/columns/:columnId/cards/:cardId/checkLists
   @Post()
   async createCheckList(
     @Param("boardId") boardId: number,
@@ -59,7 +58,6 @@ export class CheckListsController {
   @ApiOperation({ summary: "카드 내 체크리스트 제목 수정 API " })
   @ApiBearerAuth("access-token")
   @ApiBody({ type: UpdateCheckListDto })
-  // /boards/:boardId/columns/:columnId/cards/:cardId/checkLists/:checkListId
   @Patch("/:checkListId")
   async updateCheckList(
     @Param("checkListId") checkListId: number,
@@ -83,7 +81,6 @@ export class CheckListsController {
   @ApiOperation({ summary: "카드 내 체크리스트 삭제 API " })
   @ApiBearerAuth("access-token")
   @Delete("/:checkListId")
-  // /boards/:boardId/columns/:columnId/cards/:cardId/checkLists/:checkListId
   async deleteCheckList(
     @Param("checkListId") checkListId: number,
     @User() user: Users,
@@ -104,8 +101,7 @@ export class CheckListsController {
   @ApiOperation({ summary: "체크리스트 내 할일 등록 API" })
   @ApiBearerAuth("access-token")
   @ApiBody({ type: CreateCheckCurrentDto })
-  // /boards/:boardId/columns/:columnId/cards/:cardId/checkLists/:checkListId/checkcurrents
-  @Post('/:checkListId/checkcurrents')
+  @Post(':checkListId/checkcurrents')
   async createCheckCurrent(    
     @Param("boardId") boardId: number,
     @Param("columnId") columnId: number,
@@ -135,7 +131,6 @@ export class CheckListsController {
   @ApiBearerAuth("access-token")
   @ApiBody({ type: UpdateCheckCurrentDto })
   @Patch("/:checkListId/checkcurrents/:checkCurrentId")
-  // /boards/:boardId/columns/:columnId/cards/:cardId/checkLists/:checkListId/:checkCurrentId
   async updateCheckCurrent(
     @Param("checkListId") checkListId: number,
     @Param("checkCurrentId") checkCurrentId: number,
@@ -160,7 +155,6 @@ export class CheckListsController {
   @ApiOperation({ summary: "체크리스트 내 할 일 삭제 API " })
   @ApiBearerAuth("access-token")
   @Delete("/:checkListId/checkcurrents/:checkCurrentId")
-  // /boards/:boardId/columns/:columnId/cards/:cardId/checkLists/:checkListId/:checkCurrentId
   async deleteCheckCurrent(
     @Param("checkListId") checkListId: number,
     @Param("checkCurrentId") checkCurrentId: number,
