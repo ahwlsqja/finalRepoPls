@@ -19,7 +19,7 @@ import { UpdateCheckCurrentDto } from "./dto/update-checkCurrent.dto";
 import { Users } from "src/users/entities/user.entity";
 import { User } from "src/common/decorator/user.decorator";
 
-@ApiTags("CheckLists & CheckCurrent")
+@ApiTags("E. CheckLists & CheckCurrent")
 @UseGuards(AuthGuard('jwt'))
 @Controller("/boards/:boardId/columns/:columnId/cards/:cardId/checkLists")
 export class CheckListsController {

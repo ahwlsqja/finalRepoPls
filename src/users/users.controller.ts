@@ -9,8 +9,9 @@ import { RolesGuard } from "src/auth/guard/roles.guard";
 import { NotificationsService } from "src/notification/notifications.service";
 import { TokenDto } from "./dto/update-token.dto";
 import { AuthGuard } from "@nestjs/passport";
+import { ApiTags } from "@nestjs/swagger";
 
-
+@ApiTags("A1. Users")
 @UseGuards(RolesGuard)
 @UseGuards(AuthGuard('jwt'))
 @Controller("users")

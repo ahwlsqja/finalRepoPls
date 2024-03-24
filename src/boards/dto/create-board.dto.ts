@@ -3,28 +3,28 @@ import { IsNotEmpty } from "class-validator";
 import { Color } from "src/common/types/color.type";
 
 export class CreateBoardDto {
-    @IsNotEmpty({ message: '보드이름을 입력해주세요.'})
     @ApiProperty({
-        example: '오늘 할일',
-        description: "보드 설명란",
+        example: 'OO팀 칸반 보드',
+        description: "보드 제목",
         required: true,
     })
+    @IsNotEmpty({ message: '보드 이름을 입력해주세요.'})
     title: string
 
 
-    @IsNotEmpty({ message: '색을 입력해주세요.'})
     @ApiProperty({
-        example: '색',
-        description: "색을 고르삼",
+        example: 'BLACK',
+        description: "보드 색상",
         required: true,
     })
+    @IsNotEmpty({ message: '보드의 색상을 입력해주세요.'})
     color: Color
 
-    @IsNotEmpty({ message: '보드에 대한 설명을 입력해주세요.'})
     @ApiProperty({
-        example: '하루의 일기를 저장하는 일기입니다.',
-        description: "설명하셈",
+        example: '이 보드는 OO팀을 위한 칸반 보드입니다.',
+        description: "보드 설명",
         required: true,
     })
+    @IsNotEmpty({ message: '보드에 대한 설명을 입력해주세요.'})
     description: string
 }
