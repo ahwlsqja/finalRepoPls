@@ -18,8 +18,7 @@ export class CommentsService {
     @InjectRepository(Comments)
     private commentsRepository: Repository<Comments>,
     @InjectRepository(Cards)
-    private cardsRepository: Repository<Cards>,
-    private readonly slackService: SlackService
+    private cardsRepository: Repository<Cards>
   ) {}
 
   async createComment(
@@ -39,19 +38,14 @@ export class CommentsService {
       if (!card) {
           throw new InternalServerErrorException("해당 카드를 찾을 수 없습니다.");
       }
+      console.log(card.id)
+      console.log(card)
       const comment = this.commentsRepository.create({
         userId,
         cardId,
         content,
       });
       await this.commentsRepository.save(comment);
-
-       // 카드로 이동할 수 있는 URL 생성
-       const cardUrl = `https://localhost:3000/cards/${comment.cardId}`;
-
-       // 댓글 생성 메시지와 URL 링크를 Slack 메세지로 알림 보내기
-       const message = `${comment.cardId} 카드에 새로운 댓글이 등록되었습니다: ${cardUrl}\n${content}`;
-       await this.slackService.sendSlackMessage(message);
 
       return comment;
     } catch (error) {

@@ -7,13 +7,23 @@ import cookieparser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
-    .setTitle("Tickets Project")
-    .setDescription("Tickets Project API Docs")
+    .setTitle("Kanban_Board_Project#1조_whyrano")
+    .setDescription("Kanban_Board_Project API Docs")
     .setVersion("1.0")
-    .addTag("Tickets Project")
+    .addTag("Kanban_Board_Project")
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        name: 'JWT',
+        in: 'header',
+      },
+      'access-token',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
