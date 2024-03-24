@@ -3,32 +3,17 @@ services:
   postgres:
     image: postgres:15
     restart: always
-    volumes: 
-      - ./data/postgress/:/var/lib/postgresql/data
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
-    networks:
-      - compose-networks
-
   some-redis:
     image: redis
     restart: always
     ports:
       - "6379:6379"
     command: redis-server --requirepass redispassword
-    networks:
-      - compose-networks
-  
-  web:
-    build: .
-    ports:
-      - "3000:3000"
-    networks:
-      - compose-networks
-
-networks:
-  compose-networks:

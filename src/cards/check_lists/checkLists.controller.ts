@@ -10,24 +10,26 @@ import {
 } from "@nestjs/common"
 import { CheckListsService } from "./checkLists.service";
 import { UpdateCheckListDto } from "./dto/update-checkList.dto";
-import { ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CreateCheckListDto } from "./dto/create-checkList.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
 import { CreateCheckCurrentDto } from "./dto/create-checkCurrent.dto";
 import { UpdateCheckCurrentDto } from "./dto/update-checkCurrent.dto";
 
-
+@ApiTags("CheckLists & CheckCurrent")
 @UseGuards(AuthGuard('jwt'))
-@Controller("/boards/:boardId/columns/:columnId/cards/:cardId")
+@Controller("/boards/:boardId/columns/:columnId/cards/:cardId/checkLists")
 export class CheckListsController {
   constructor(
     private readonly checkListsService: CheckListsService
     ) {}
 
-  @ApiOperation({ summary: "카드 내 체크리스트 등록 API" })
   @UseGuards(BoardMemberGuard)
-  @Post('/checkLists')
+  @ApiOperation({ summary: "카드 내 체크리스트 등록 API" })
+  @ApiBearerAuth("access-token")
+  @ApiBody({ type: CreateCheckListDto })
+  @Post()
   async createCheckList(
     @Param("boardId") boardId: number,
     @Param("columnId") columnId: number,
@@ -48,7 +50,9 @@ export class CheckListsController {
   }
 
   @ApiOperation({ summary: "카드 내 체크리스트 제목 수정 API " })
-  @Patch("/checkLists/:checkListId")
+  @ApiBearerAuth("access-token")
+  @ApiBody({ type: UpdateCheckListDto })
+  @Patch("/:checkListId")
   async updateCheckList(
     @Param("checkListId") checkListId: number,
     @Body() updateCheckListDto: UpdateCheckListDto,
@@ -65,7 +69,8 @@ export class CheckListsController {
   }
 
   @ApiOperation({ summary: "카드 내 체크리스트 삭제 API " })
-  @Delete("/checkLists/:checkListId")
+  @ApiBearerAuth("access-token")
+  @Delete("/:checkListId")
   async deleteCheckList(
     @Param("checkListId") checkListId: number,
   ) {
@@ -80,9 +85,11 @@ export class CheckListsController {
   //            CheckCurrent 관련 API
   // ===============================================
 
-  @ApiOperation({ summary: "체크리스트 내 할일 등록 API" })
   @UseGuards(BoardMemberGuard)
-  @Post(':checkListId/checkcurrents')
+  @ApiOperation({ summary: "체크리스트 내 할일 등록 API" })
+  @ApiBearerAuth("access-token")
+  @ApiBody({ type: CreateCheckCurrentDto })
+  @Post('/:checkListId/checkcurrents')
   async createCheckCurrent(    
     @Param("boardId") boardId: number,
     @Param("columnId") columnId: number,
@@ -105,7 +112,9 @@ export class CheckListsController {
 }
 
   @ApiOperation({ summary: "체크리스트 내 할 일 내용 및 진행상태 수정 API " })
-  @Patch(":checkListId/checkcurrents/:checkCurrentId")
+  @ApiBearerAuth("access-token")
+  @ApiBody({ type: UpdateCheckCurrentDto })
+  @Patch("/:checkListId/checkcurrents/:checkCurrentId")
   async updateCheckCurrent(
     @Param("checkListId") checkListId: number,
     @Param("checkCurrentId") checkCurrentId: number,
@@ -124,7 +133,8 @@ export class CheckListsController {
   }
 
   @ApiOperation({ summary: "체크리스트 내 할 일 삭제 API " })
-  @Delete(":checkListId/checkcurrents/:checkCurrentId")
+  @ApiBearerAuth("access-token")
+  @Delete("/:checkListId/checkcurrents/:checkCurrentId")
   async deleteCheckCurrent(
     @Param("checkListId") checkListId: number,
     @Param("checkCurrentId") checkCurrentId: number,
