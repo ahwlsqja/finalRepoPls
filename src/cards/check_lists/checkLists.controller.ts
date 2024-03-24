@@ -17,6 +17,7 @@ import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
 import { CreateCheckCurrentDto } from "./dto/create-checkCurrent.dto";
 import { UpdateCheckCurrentDto } from "./dto/update-checkCurrent.dto";
 
+
 @UseGuards(AuthGuard('jwt'))
 @Controller(":boardId/:columnId/:cardId")
 export class CheckListsController {

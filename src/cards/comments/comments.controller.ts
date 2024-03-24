@@ -18,9 +18,9 @@ import { User } from "src/common/decorator/user.decorator";
 import { AuthGuard } from "@nestjs/passport";
 import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
 
-@UseGuards(AuthGuard('jwt'))
 @ApiTags("Comments")
-@Controller(":boardId/:columnId/:cardId/comments")
+@UseGuards(AuthGuard('jwt'))
+@Controller("/boards/:boardId/columns/:columnId/cards/:cardId/comments")
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) { }
 
@@ -48,12 +48,7 @@ export class CommentsController {
       data,
     };
   }
-  /**
-   * 영우's 카드 상세 조회에 편입시키는게 좋을 것 같음.
-   * - /columns에서 Column 조회하면, Card 목록이 나오고,
-   * - /cards에서 Card 조회하면, Comments 목록이 나오도록하면,
-   * - 각 도메인에서 getAll-, get-ById API 갯수를 줄일 수 있을듯.
-   */
+
   @ApiOperation({ summary: "카드 내 댓글 상세 조회 API " })
   @Get("/:commentId")
 
