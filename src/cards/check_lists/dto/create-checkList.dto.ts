@@ -4,9 +4,9 @@ import { IsNotEmpty, IsNumber, IsString, MaxLength } from "class-validator";
 export class CreateCheckListDto {
 
     @ApiProperty({
-        example: "제목: 첫번째 체크리스트",
+        example: "첫번째 체크리스트",
         description: "체크리스트 제목",
-      })
+    })
       
     @IsString()
     @IsNotEmpty({ message: "체크리스트 제목을 입력해주세요." })

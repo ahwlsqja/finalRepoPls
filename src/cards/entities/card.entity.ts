@@ -17,9 +17,6 @@ import { Tag } from "../types/tag.type";
 })
   export class Cards extends BaseModel{
 
-    @Column({ type: 'bigint', nullable: false })
-    columnId: number;
-
     @Column({ type: 'varchar', nullable: false })
     title: string;
 
@@ -69,4 +66,7 @@ import { Tag } from "../types/tag.type";
     })
     @JoinColumn({ name: "columnId", referencedColumnName: "id" })
     column: Columns;
+
+    @Column({ type: 'int', nullable: true })
+    columnId: number;
   }
