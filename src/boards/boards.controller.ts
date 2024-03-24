@@ -85,7 +85,6 @@ export class BoardsController {
     @User() user: Users,
   ){
     const name = user.name
-    console.log(name)
     return await this.boardsService.updateBoard(user.id, name, +id, updateBoardDto);
   }
 

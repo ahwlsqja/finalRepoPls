@@ -45,7 +45,6 @@ export class SlackService {
       };
       const result = await axios(config)
         .then((data) => {
-          console.log(data);
         })
         .catch((error) => {
         console.error('Slack 메시지 전송 중 오류:', error);
