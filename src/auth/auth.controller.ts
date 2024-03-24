@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginDto } from 'src/users/dto/login.dto';
@@ -22,6 +22,11 @@ export class AuthController {
       loginDto.password,
     );
     res.cookie("authorization", `Bearer ${user.access_token}`);
-    res.send("로그인 완료");
+    res.send({
+      statusCode: HttpStatus.OK,
+      message: "로그인에 성공하였습니다.",
+      user
+    });
+
   }
 }

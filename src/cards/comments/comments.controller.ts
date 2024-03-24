@@ -13,7 +13,7 @@ import { CommentsService } from "./comments.service";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
 import { Users } from "src/users/entities/user.entity";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { User } from "src/common/decorator/user.decorator";
 import { AuthGuard } from "@nestjs/passport";
 import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
@@ -26,6 +26,8 @@ export class CommentsController {
 
   @UseGuards(BoardMemberGuard)
   @ApiOperation({ summary: "카드 내 댓글 등록 API" })
+  @ApiBearerAuth("access-token")
+  @ApiBody({ type: CreateCommentDto })
   @Post()
   async createComment(
     @User() user: Users, 
@@ -34,11 +36,13 @@ export class CommentsController {
     @Param("cardId") cardId: number,
     @Body() createCommentDto: CreateCommentDto,
   ) {
+    const name = user.name
     const data = await this.commentsService.createComment(
       user.id, 
       boardId,
       columnId,
       cardId,
+      name,
       createCommentDto.content,
     );
 
@@ -49,7 +53,9 @@ export class CommentsController {
     };
   }
 
+  @UseGuards(BoardMemberGuard)
   @ApiOperation({ summary: "카드 내 댓글 상세 조회 API " })
+  @ApiBearerAuth("access-token")
   @Get("/:commentId")
 
   async getCommentByCommentId(
@@ -59,19 +65,24 @@ export class CommentsController {
     return {
       statusCode: HttpStatus.OK,
       message: "댓글 상세 조회에 성공하였습니다.",
-      data,
+      data
     };
   }
 
+  @UseGuards(BoardMemberGuard)
   @ApiOperation({ summary: "카드 내 댓글 수정 API " })
+  @ApiBearerAuth("access-token")
+  @ApiBody({ type: UpdateCommentDto })
   @Patch("/:commentId")
   async updateComment(
     @User() user: Users, 
     @Param("commentId") commentId: number,
     @Body() updateCommentDto: UpdateCommentDto,
   ) {
+    const name = user.name
     const data = await this.commentsService.updateComment(
       user.id,
+      name,
       commentId,
       updateCommentDto,
     );
@@ -81,14 +92,17 @@ export class CommentsController {
       data,
     };
   }
-
+  
+  @UseGuards(BoardMemberGuard)
   @ApiOperation({ summary: "카드 내 댓글 삭제 API " })
+  @ApiBearerAuth("access-token")
   @Delete("/:commentId")
   async deleteComment(
     @User() user: Users,
     @Param("commentId") commentId: number,
   ) {
-    await this.commentsService.deleteComment(user.id, commentId);
+    const name = user.name
+    await this.commentsService.deleteComment(user.id, name, commentId);
     return {
       statusCode: HttpStatus.OK,
       message: "댓글 삭제에 성공하였습니다.",
