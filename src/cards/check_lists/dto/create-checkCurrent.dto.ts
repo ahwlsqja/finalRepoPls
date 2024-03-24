@@ -7,7 +7,7 @@ export class CreateCheckCurrentDto {
     @ApiProperty({
         example: "TIL 쓰기",
         description: "해야할 일의 내용",
-      })
+    })
 
     @IsString()
     @IsNotEmpty({ message: "할 일 내용을 입력해주세요." })

@@ -50,7 +50,7 @@ export class ColumnsController {
   @UseGuards(BoardMemberGuard)
   @ApiOperation({ summary: "특정 보드 모든 칼럼 조회 API " })
   @ApiBearerAuth("access-token")
-  @Get('all/:boardId')
+  @Get('all')
   async getAllColumnByBoardId(@Param('boardId') boardId: number) {
     const data = await this.columnsService.getAllColumnByBoardId(boardId);
     return {

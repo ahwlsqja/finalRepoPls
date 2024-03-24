@@ -57,7 +57,7 @@ export class BoardsController {
   async getBoardByBoardId(
     @Param('id') id: number)
   {
-    const data = this.boardsService.getBoardByBoardId(id)
+    const data = await this.boardsService.getBoardByBoardId(id)
     return {
       statusCode: HttpStatus.OK,
       message: "보드 상세 조회에 성공하였습니다.",
