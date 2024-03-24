@@ -1,3 +1,4 @@
+version: "3.0"
 services:
   postgres:
     image: postgres:15
@@ -10,6 +11,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
+    networks:
+      - compose-networks
 
   some-redis:
     image: redis
@@ -17,3 +20,15 @@ services:
     ports:
       - "6379:6379"
     command: redis-server --requirepass redispassword
+    networks:
+      - compose-networks
+  
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    networks:
+      - compose-networks
+
+networks:
+  compose-networks:
