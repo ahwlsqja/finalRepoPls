@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { compare, hash } from 'bcrypt';
+import { compare, genSalt, hash } from 'bcrypt';
 import { MailService } from 'src/mail/mail.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { Users } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Role } from 'src/users/types/userRole.type';
+import { ENV_HASH_ROUND_KEY, ENV_SSHKRY_KEY } from 'src/common/const/env-keys.const';
 
 
 @Injectable()
@@ -19,27 +20,46 @@ export class AuthService {
 
     async create(createUserDto: CreateUserDto) {
         const { email, password, passwordConfirm, name, sshKey } = createUserDto;
-        const hashpassword = await hash(password, 10);
+        const hashkey = this.configService.get(Number[ENV_HASH_ROUND_KEY]);
+        const salt = await genSalt(hashkey);
+        const hashpassword = await hash(password, salt);
         const user = await this.findemail(email);
         
     
         if(user){
-          throw new Error("이미 유저가 존재합니다.");
+          throw new BadRequestException("이미 유저가 존재합니다.");
         }
     
         if(password !== passwordConfirm){
-          throw new Error("패스워드가 확인과 일치하지 않습니다.");
+          throw new UnauthorizedException("패스워드가 확인과 일치하지 않습니다.");
         }
+
+        if (
+          !email.includes("@naver.com") &&
+          !email.includes("@daum.net") &&
+          !email.includes("@google.com") &&
+          !email.includes("@gmail.com") &&
+          !email.includes("@googlemail.com") &&
+          !email.includes("@hanmail.net") &&
+          !email.includes("@icloud.com") &&
+          !email.includes("@cyworld.com") &&
+          !email.includes("@kakao.com") &&
+          !email.includes("@mail.com") &&
+          !email.includes("@narasarang.or.kr") &&
+          !email.includes("@tistory.com")
+      ) {
+        throw new BadRequestException("이메일 조건이 맞지 않습니다.");
+      }
+
 
         if(sshKey){
           await this.sshkey(sshKey);
-          const hashsshkey = await hash(sshKey, 10);
           
           const aduser = this.usersRepository.create({
             email,
             password : hashpassword,
             name,
-            sshKey : hashsshkey,
+            sshKey,
             role : Role.Admin,
             IsVaildated : true
           });
@@ -76,10 +96,10 @@ export class AuthService {
       }
 
       async sshkey (sshKey : string){
-        const ssykeys = this.configService.get<string>('ssKeys');
+        const ssykeys = this.configService.get<string>(ENV_SSHKRY_KEY);
 
         if(sshKey !== ssykeys){
-          throw new Error("키가 일치하지 않습니다.");
+          throw new UnauthorizedException("키가 일치하지 않습니다.");
         }
 
         return ssykeys;
@@ -92,11 +112,11 @@ export class AuthService {
         });
     
         if(user === null){
-          throw new Error("유저가 존재하지 않습니다.");
+          throw new BadRequestException("유저가 존재하지 않습니다.");
         }
     
         if (!(await compare(password, user.password))) {
-          throw new Error('비밀번호를 확인해주세요.');
+          throw new BadRequestException('비밀번호를 확인해주세요.');
         }
     
         const payload = { email, sub: user.id };
