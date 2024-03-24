@@ -95,8 +95,12 @@ export class BoardsController {
     @User() user: Users,
   ){
     const name = user.name
-    console.log(name)
-    return await this.boardsService.updateBoard(user.id, name, +id, updateBoardDto);
+    const data = await this.boardsService.updateBoard(user.id, name, +id, updateBoardDto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: "보드 수정(호스트)에 성공하였습니다.",
+      data
+    }
   }
 
 
@@ -111,7 +115,11 @@ export class BoardsController {
     @User() user: Users) {
     const userId = user.id
     const name = user.name
-    return this.boardsService.removeMyBoard(userId,name, +id);
+    await this.boardsService.removeMyBoard(userId,name, +id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: "보드 삭제(호스트)에 성공하였습니다.",
+    }
   }
 
 
@@ -146,7 +154,10 @@ export class BoardsController {
         +authenticateDto.authenticateEmailCode,
       );
 
-      return { message: `인증 및 초대 처리가 완료되었습니다. 반갑습니다. ${authenticateDto.memberEmail}님`, data: hostUser}
+      return { 
+        statusCode: HttpStatus.OK,
+        message: `인증 및 초대 처리가 완료되었습니다. 반갑습니다. ${authenticateDto.memberEmail}님`, 
+        data: hostUser}
 
     }
 
@@ -160,6 +171,10 @@ export class BoardsController {
     @User() user: Users
   ) {
     const name = user.name
-    return await this.boardsService.restoreMyBoard(user.id, id, name)
+    const data = await this.boardsService.restoreMyBoard(user.id, id, name)
+    return {
+      statusCode: HttpStatus.OK,
+      message: "삭제한 보드를 성공적으로 복구하였습니다.",
+    }
   }
 }

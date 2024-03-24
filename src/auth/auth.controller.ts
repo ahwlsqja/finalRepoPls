@@ -2,7 +2,7 @@ import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginDto } from 'src/users/dto/login.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 
 @ApiTags("A. Auth")
@@ -10,12 +10,15 @@ import { ApiTags } from '@nestjs/swagger';
 export class AuthController {
   constructor(private readonly authService: AuthService ) {}
       
-  
+  @ApiOperation({ summary: "회원가입 API " })
+  @ApiBody({ type: CreateUserDto })
   @Post("sign-up")
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.authService.create(createUserDto);
   }
 
+  @ApiOperation({ summary: "로그인 API " })
+  @ApiBody({ type: LoginDto })
   @Post("sign-in")
   async login(@Body() loginDto: LoginDto, @Res() res) {
     const user = await this.authService.login(
