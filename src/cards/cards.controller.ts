@@ -18,6 +18,7 @@ import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
 import { User } from "src/common/decorator/user.decorator";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 
+
 @ApiTags("Cards")
 @UseGuards(AuthGuard('jwt'))
 @Controller("/boards/:boardId/columns/:columnId/cards")
@@ -182,7 +183,7 @@ export class CardsController {
   @UseGuards(BoardMemberGuard)
   @ApiOperation({ summary: "컬럼 내 카드 위치 변경 API " })
   @ApiBearerAuth("access-token")
-  @Patch(':cardId/:newOrder')
+  @Patch(':cardId/swapOrder/:newOrder')
   async changeCardPosition(
     @Param('cardId') id: number,
     @Param('newOrder') newOrder: number,
@@ -196,5 +197,3 @@ export class CardsController {
     }
   }
 }
-
-
