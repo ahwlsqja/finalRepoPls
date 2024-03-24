@@ -10,11 +10,11 @@ export class UsersService {
               private userRepository : Repository<Users>){}
   
 
-  async findAll() {
+  async getAllUserInfos() {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number, user : Users) {
+  async getUserInfosByUserId(id: number, user : Users) {
     const users = await this.userRepository.findOne({ where : { id },
     select: ['id', 'email', 'name', 'IsVaildated', 'createdAt', 'updatedAt', 'role']});
 
@@ -44,7 +44,7 @@ export class UsersService {
   }
   
 
-  async update(userId : number, user : Users, updateUserDto: UpdateUserDto) {
+  async updateUserInfosByUserId(userId : number, user : Users, updateUserDto: UpdateUserDto) {
     const users = await this.findid(userId);
 
     if(!users){
@@ -72,7 +72,7 @@ export class UsersService {
     return await this.userRepository.update(userId, updateUserDto);
   }
 
-  async tokenupdate(email : string, emailtoken : string, user : Users) {
+  async tokenUpdate(email : string, emailtoken : string, user : Users) {
     const users = await this.userRepository.findOne({ where : { email }});
 
     if(!users){
@@ -91,7 +91,7 @@ export class UsersService {
     return await this.userRepository.save(user);
   }
 
-  async remove(userId : number, user : Users) {
+  async removeUserInfosByUserId(userId : number, user : Users) {
     const users = await this.findid(userId);
 
     if(!users){
