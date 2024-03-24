@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, BadRequestException, UseGuards, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, HttpStatus } from '@nestjs/common';
 import { ColumnsService } from './columns.service';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
@@ -7,9 +7,11 @@ import { BoardsService } from 'src/boards/boards.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Users } from 'src/users/entities/user.entity';
 import { User } from 'src/common/decorator/user.decorator';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags("B. Columns")
 @UseGuards(AuthGuard('jwt'))
-@Controller('/:boardId/columns')
+@Controller('/boards/:boardId/columns')
 
 export class ColumnsController {
   constructor(
@@ -17,37 +19,40 @@ export class ColumnsController {
     private readonly boardsService: BoardsService,
     ) { }
 
-  //칼럼 생성
-  //response 변경 및 서비스에서 card -> cards 변경
+  // 컬럼 생성 API
   @UseGuards(BoardMemberGuard)
+  @ApiOperation({ summary: "보드 내 컬럼 등록 API" })
+  @ApiBearerAuth("access-token")
+  @ApiBody({ type: CreateColumnDto })
   @Post()
   async create(
     @Param('boardId') boardId: number,
     @User() user: Users,
     @Body() createColumnDto: CreateColumnDto,
-    ) {
-        const name = user.name
-        const ColumnCount = await this.columnsService.count(boardId); // 전체 칼럼 갯수
-        const data = await this.columnsService.create(
-          boardId,
-          name,
-          createColumnDto,
-          ColumnCount + 1, 
-        );    
-        return {
-          statusCode: HttpStatus.CREATED,
-          messgae: '컬럼 생성에 성공하였습니다.',
-          ColumnCount,
-          data
-        }
+  ) {
+    const name = user.name
+    const ColumnCount = await this.columnsService.count(boardId);
+    const data = await this.columnsService.create(
+      boardId,
+      name,
+      createColumnDto,
+      ColumnCount + 1, 
+    );    
+    return {
+      statusCode: HttpStatus.CREATED,
+      messgae: '컬럼 생성에 성공하였습니다.',
+      ColumnCount,
+      data
+    }
   }
 
-  // 특정 보드 모든 칼럼 조회
-  // response 변경
+  // 특정 보드 모든 칼럼 조회 API
   @UseGuards(BoardMemberGuard)
+  @ApiOperation({ summary: "특정 보드 모든 칼럼 조회 API " })
+  @ApiBearerAuth("access-token")
   @Get('all/:boardId')
-  async findAll(@Param('boardId') boardId: number) {
-    const data = await this.columnsService.findAll(boardId);
+  async getAllColumnByBoardId(@Param('boardId') boardId: number) {
+    const data = await this.columnsService.getAllColumnByBoardId(boardId);
     return {
       statusCode: HttpStatus.OK,
       messgae: '컬럼 조회에 성공하였습니다.',
@@ -55,12 +60,15 @@ export class ColumnsController {
     }
   }
 
-  // 특정 보드 칼럼 한개 조회
-  // response 변경
+  // 특정 보드 컬럼 상세 조회 API
   @UseGuards(BoardMemberGuard)
+  @ApiOperation({ summary: "특정 보드 컬럼 상세 조회 API " })
+  @ApiBearerAuth("access-token")
   @Get(':columnId')
-  async findOne(@Param('columnId') id: number) { //getColumnByColumnId
-    const data = await this.columnsService.findColumns(+id);
+  async getColumnByColumnId(
+    @Param('columnId') id: number
+    ) {
+    const data = await this.columnsService.getColumnByColumnId(+id);
     return {
       statusCode: HttpStatus.OK,
       message: '컬럼 상세 조회에 성공하였습니다.',
@@ -68,9 +76,11 @@ export class ColumnsController {
     }
   }
 
-  // 컬럼 업데이트
-  // response 변경
+  // 컬럼 수정 API
   @UseGuards(BoardMemberGuard)
+  @ApiOperation({ summary: "카드 내 댓글 수정 API " })
+  @ApiBearerAuth("access-token")
+  @ApiBody({ type: UpdateColumnDto })
   @Patch(':columnId')
   async update(
     @Param('columnId') id: number,
@@ -87,24 +97,10 @@ export class ColumnsController {
     }
   }
 
-  // 컬럼 이동
+  // 컬럼 삭제 API
   @UseGuards(BoardMemberGuard)
-  @Patch(':columnId/:newOrder')
-  async swapColumnOrder(
-    @Param('columnId') id: number,
-    @User() user:Users,
-    @Param('newOrder') newOrder: number,
-  ){
-    const name = user.name
-    await this.columnsService.swapOrder(id,name, newOrder);
-    return {
-      statusCode: HttpStatus.OK,
-      message: '칼럼 순서를 변경하였습니다.',
-    }
-  }
-
-  // 칼럼 삭제
-  @UseGuards(BoardMemberGuard)
+  @ApiOperation({ summary: "보드 내 컬럼 삭제 API " })
+  @ApiBearerAuth("access-token")
   @Delete(':columnId')
   async remove(
     @Param('columnId') id: number,
@@ -114,7 +110,26 @@ export class ColumnsController {
     await this.columnsService.remove(+id, name);
     return {
       statusCode: HttpStatus.OK,
-      message: '칼럼 삭제에 성공하였습니다.',
+      message: '컬럼 삭제에 성공하였습니다.',
     }
   }
+
+  // 컬럼 순서 변경 및 위치 이동 API
+  @UseGuards(BoardMemberGuard)
+  @ApiOperation({ summary: "컬럼 순서 변경 및 위치 이동 API" })
+  @ApiBearerAuth("access-token")
+  @Patch(':columnId/swapOrder/:newOrder')
+  async swapColumnOrder(
+    @Param('columnId') id: number,
+    @User() user:Users,
+    @Param('newOrder') newOrder: number,
+  ){
+    const name = user.name
+    await this.columnsService.swapOrder(id, name, newOrder);
+    return {
+      statusCode: HttpStatus.OK,
+      message: '컬럼 순서를 변경하였습니다.',
+    }
+  }
+
 }

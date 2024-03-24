@@ -11,7 +11,7 @@ import {
 } from "@nestjs/common"
 import { BoardsService } from "./boards.service";
 import { CreateBoardDto } from "./dto/create-board.dto";
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { User } from "src/common/decorator/user.decorator";
 import { Users } from "src/users/entities/user.entity";
 import { InvitationDto } from "./dto/invite.dto";
@@ -22,37 +22,38 @@ import { Board } from "./entities/board.entity";
 import { AuthGuard } from "@nestjs/passport";
 import { UpdateBoardDto } from "./dto/board.update.dto";
 
+@ApiTags("A2. Boards")
 @UseGuards(AuthGuard('jwt'))
 @Controller("boards")
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
   
-  @ApiOperation({
-    summary: '보드 만들기 API',
-    description: '보드를 만듭니다.',
-  })
-  @ApiBearerAuth()
-  @Post()
+  // 보드 생성 API
+  @ApiOperation({ summary: '보드 생성 API' })
+  @ApiBearerAuth("access-token")
   @ApiBody({ type: CreateBoardDto })
   @ApiResponse({ type: Board })
+  @Post()
   async createBoard(
     @Body() createBoardDto: CreateBoardDto,
     @User() user: Users,
     ) {
-    return this.boardsService.createBoard(user.id, user.name, createBoardDto);
+    const data = this.boardsService.createBoard(user.id, user.name, createBoardDto);
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "보드 생성에 성공하였습니다.",
+      data
+    }
   }
 
 
 
-  // 내 보드 조회
-  @ApiOperation({
-    summary: '특정 보드 조회 API',
-    description: '보드를 조회합니다.',
-  })
-  @ApiBearerAuth()
+  // 특정 보드 조회 API
   @UseGuards(BoardMemberGuard)
-  @Get(':id')
+  @ApiOperation({ summary: '특정 보드 조회 API' })
+  @ApiBearerAuth("access-token")
   @ApiResponse({ type: Board })
+  @Get(':id')
   async getBoardByBoardId(
     @Param('id') id: number)
   {
@@ -63,28 +64,31 @@ export class BoardsController {
       data
     }
   }
- 
-
 
   // 로그인한 id 기반으로 특정 보드 조회
-  @ApiOperation({
-    summary: '자신의 보드 조회 API',
-    description: '보드를 조회합니다.',
-  })
-  @ApiBearerAuth()
-  @Get()
+  @ApiOperation({ summary: '자신의 보드 조회 API' })
+  @ApiBearerAuth("access-token")
   @ApiResponse({ type: Board })
+  @Get()
   async getAllBoardById(
     @User() user: Users,
   ) {
-    return this.boardsService.getAllBoardById(user.id, user.name)
+    const data = this.boardsService.getAllBoardById(user.id, user.name)
+    return {
+      statusCode: HttpStatus.OK,
+      message: "특정 보드 조회에 성공하였습니다.",
+      data
+    }
   }
 
 
 
-  // 보드 수정(호스트)
+  // 보드 수정(호스트) API
   @UseGuards(BoardHostGuard)
-  @Patch(":id") // boardId 받는거임
+  @ApiOperation({ summary: "보드 수정(호스트) API" })
+  @ApiBearerAuth("access-token")
+  @ApiBody({ type: UpdateBoardDto })
+  @Patch(":id")
   async updateBoard(
     @Param('id') id: number,
     @Body() updateBoardDto: UpdateBoardDto,
@@ -97,9 +101,11 @@ export class BoardsController {
 
 
 
-  // 보드 삭제(호스트)
+  // 보드 삭제(호스트) API
   @UseGuards(BoardHostGuard)
-  @Delete(":id") // boardId 받는거임
+  @ApiOperation({ summary: "보드 삭제(호스트) API" })
+  @ApiBearerAuth("access-token")
+  @Delete(":id")
   async removeMyBoard(
     @Param('id') id: number,
     @User() user: Users) {
@@ -110,8 +116,11 @@ export class BoardsController {
 
 
   
-  // 맴버 초대(호스트)
+  // 맴버 초대(호스트) API
   @UseGuards(BoardHostGuard)
+  @ApiOperation({ summary: "맴버 초대(호스트) API" })
+  @ApiBearerAuth("access-token")
+  @ApiBody({ type: InvitationDto })
   @Post('haveover/:boardId')
   async inviteMember(
     @Param('boardId') boardId: number,
@@ -123,7 +132,10 @@ export class BoardsController {
 
 
 
-  // 유저 초대 수락(인증번호 인증)
+  // 유저 초대 수락(인증번호 인증) API
+  @ApiOperation({ summary: "유저 초대 수락(인증번호 인증) API" })
+  @ApiBearerAuth("access-token")
+  @ApiBody({ type: AuthenticateDto })
   @Post('accept')
   async authenticateEmail(
     @Body() authenticateDto: AuthenticateDto
@@ -138,8 +150,10 @@ export class BoardsController {
 
     }
 
-  // 보드 삭제 복구
+  // 보드 삭제 복구 API
   @UseGuards(BoardHostGuard)
+  @ApiOperation({ summary: "보드 삭제 복구 API" })
+  @ApiBearerAuth("access-token")
   @Patch('restore/:id')
   async restoreBoard(
     @Param('id') id: number,

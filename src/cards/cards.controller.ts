@@ -19,7 +19,7 @@ import { User } from "src/common/decorator/user.decorator";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 
-@ApiTags("Cards")
+@ApiTags("C. Cards")
 @UseGuards(AuthGuard('jwt'))
 @Controller("/boards/:boardId/columns/:columnId/cards")
 

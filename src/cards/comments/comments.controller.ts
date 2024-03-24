@@ -18,7 +18,7 @@ import { User } from "src/common/decorator/user.decorator";
 import { AuthGuard } from "@nestjs/passport";
 import { BoardMemberGuard } from "src/auth/guard/boardmember.guard";
 
-@ApiTags("Comments")
+@ApiTags("D. Comments")
 @UseGuards(AuthGuard('jwt'))
 @Controller("/boards/:boardId/columns/:columnId/cards/:cardId/comments")
 export class CommentsController {
