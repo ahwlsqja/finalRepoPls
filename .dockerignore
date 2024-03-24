@@ -1,0 +1,12 @@
+node_modelues/*
+data/postgres/*
+.env
+.idea
+.git
+.gitignore
+.dockerignore
+Dockerfile
+*.md
+*.sh
+*.yml
+scripts

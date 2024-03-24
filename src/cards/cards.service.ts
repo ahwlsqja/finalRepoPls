@@ -88,6 +88,13 @@ export class CardsService {
       type: '카드 수정',
       message: `카드가 수정되었습니다: ${updateCardDto.title}.`,
     })
+    // return 추가 정비 해야함
+    // return {
+    //   title:updateCardDto.title,
+    //   color:updateCardDto.color,
+    //   content:updateCardDto.content,
+    //   endDate:updateCardDto.endDate
+    // }
   }
 
 

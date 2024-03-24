@@ -59,7 +59,7 @@ export class ColumnsController {
   // response 변경
   @UseGuards(BoardMemberGuard)
   @Get(':columnId')
-  async findOne(@Param('columnId') id: number) {
+  async findOne(@Param('columnId') id: number) { //getColumnByColumnId
     const data = await this.columnsService.findColumns(+id);
     return {
       statusCode: HttpStatus.OK,
