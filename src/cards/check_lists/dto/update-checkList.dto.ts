@@ -7,7 +7,7 @@ import { IsNotEmpty, IsString, MaxLength } from "class-validator";
 export class UpdateCheckListDto {
 
     @ApiProperty({
-        example: "제목: 수정된 첫번째 체크리스트",
+        example: "첫번째 체크리스트 ( 수정 )",
         description: "수정할 체크리스트 제목",
       })
       

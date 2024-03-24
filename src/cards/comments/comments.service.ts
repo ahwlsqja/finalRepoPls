@@ -1,4 +1,3 @@
-
 import {
   Injectable,
   InternalServerErrorException,
@@ -10,7 +9,7 @@ import { Comments } from "./entities/comment.entity";
 import { Repository } from "typeorm";
 import _ from "lodash";
 import { Cards } from "../entities/card.entity";
-import { SlackService } from "../../common/slackMessage.service";
+
 
 @Injectable()
 export class CommentsService {
