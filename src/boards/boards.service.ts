@@ -3,16 +3,15 @@ import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@n
 import { CreateBoardDto } from "./dto/create-board.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Board } from "./entities/board.entity";
-import { Brackets, DataSource, Not, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { BoardMember } from "./entities/boardmember.entity";
 import { Users } from "src/users/entities/user.entity";
 import { InvitationDto } from "./dto/invite.dto";
 import { UsersService } from "src/users/users.service";
-import { CACHE_MANAGER, Cache, CacheKey } from "@nestjs/cache-manager";
+import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager";
 import { MailService } from "src/mail/mail.service";
 import _ from "lodash";
 import { NotificationsService } from "src/notification/notifications.service";
-import { error } from "console";
 import { UpdateBoardDto } from "./dto/board.update.dto";
 
 @Injectable()
@@ -27,6 +26,7 @@ export class BoardsService {
     private readonly mailService: MailService,
     private readonly notificationsService: NotificationsService,
     private dataSource: DataSource,
+    private userServices : UsersService
   ){}
 
   // 보드 생성
@@ -38,7 +38,6 @@ export class BoardsService {
       await queryRunner.connect();
       await queryRunner.startTransaction('READ COMMITTED'); 
       try{
-        console.log('호스트', userId)
       // 보드 생성
 
       const createdBoard = queryRunner.manager.create(Board, createBoardDto)  
@@ -64,7 +63,6 @@ export class BoardsService {
         board: { id: savedBoard.id },
         isCreateUser: true
       });
-      console.log('호스트--------34', userId)
       // Host 유저 저장
       await queryRunner.manager.save(BoardMember, HostUser);
 
@@ -131,7 +129,6 @@ async updateBoard(userId: number,
     await queryRunner.startTransaction('READ COMMITTED'); 
 
     try{
-    console.log(name)
 
       // 1. param로 만든 id에 따른 Board 찾기
       const board = await queryRunner.manager.findOne(Board,{
@@ -183,7 +180,6 @@ async updateBoard(userId: number,
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction('READ COMMITTED'); 
-    console.log(userId)
     try{
       // 1. param로 만든 id에 따른 Board 찾기
       const board = await queryRunner.manager.findOne(Board,{
