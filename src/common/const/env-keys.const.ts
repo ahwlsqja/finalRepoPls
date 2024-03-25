@@ -2,6 +2,8 @@ export const ENV_PROTOCOL_KEY = "PROTOCOL";
 
 export const ENV_HOST_KEY = "HOST";
 
+export const ENV_SSHKRY_KEY = "sshKey";
+
 export const ENV_JWT_SECRET_KEY = "JWT_SECRET";
 
 export const ENV_HASH_ROUND_KEY = "HASH_ROUNDS";

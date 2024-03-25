@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './jwt.strategy';
 import { MailModule } from 'src/mail/mail.module';
 
+
 @Module({
   imports: [JwtModule.registerAsync({
     useFactory: (config: ConfigService) => ({
