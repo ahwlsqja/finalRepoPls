@@ -7,7 +7,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { MailModule } from "src/mail/mail.module";
 import { UsersModule } from "src/users/users.module";
-import { CommonModule } from "src/common/common.module";
 import { NotificationModule } from "src/notification/notification.module";
 
 @Module({

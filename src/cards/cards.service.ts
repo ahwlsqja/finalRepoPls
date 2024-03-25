@@ -230,6 +230,9 @@ export class CardsService {
     })
 
     return await this.cardsRepository.save(cardWorker);
+  }catch(error){
+    console.log(error);
+  }
 
   }
 
@@ -306,7 +309,6 @@ export class CardsService {
     const cardAtNewOrder = await this.cardsRepository.findOne({
       where: { orderByCards: newOrder }
     })
-    console.log(cardAtNewOrder.orderByCards)
 
     const queryRunner = this.dataSource.createQueryRunner();
     
